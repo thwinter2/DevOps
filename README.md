@@ -2,6 +2,10 @@
 
 ## Class Activities
 
+I was in the 8:00PM eu-west-1 Breakout Group.
+
+![img](HW0-Discussion.png)
+
 ## Basics Workshop
 
 ### Customize Bash Prompt
@@ -24,7 +28,7 @@
     ```
 ### [About Me](Basics/AboutMe.md)
 
-### [Completed Git Levels]
+### Completed Git Levels
 ![img](Basics/completedGitLevels.png)
 
 ## Opunit Checks
@@ -38,7 +42,7 @@
 4. What are signs of a bad kanban board?
 
     **If the board is empty, has too many items, or only contains general high-level items**
-    
+
 5. Why are nightly builds useful?
 
      **Nightly builds keep the codebase up-to-date more than waiting months later. The codebase can be tested/confirmed more frequently, and doesn't leave developers scrambling at the end to try and fix a mess of untested merged features. Also helps update very large codebases that take hours to update, so developers aren't waiting around during work hours.**
@@ -53,6 +57,8 @@
 10. What differences did you observe between the two cloud provider apis you tried? 
 
 ## Provisioning Workshop
+
+[Completed Code](index.js)
 
 ## Provision with Additional Cloud Provider
 
