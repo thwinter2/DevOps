@@ -54,6 +54,9 @@ I was in the 8:00PM eu-west-1 Breakout Group.
     **The developer is responsible to testing and troubleshooting their developed code. There is not a dedicated QA Engineer to test each developer's code, so the developer acts as the de facto QA department for their code**
     
 9. Why can sharing an api key be problematic?
+
+    **Because an api key is a unique identifier to each user. Sharing a key with someone with unknowingly bad intentions could provide them to use you as cover. They also have access to your own assets of that service, so you have given access to your "piggybank" to someone else**
+
 10. What differences did you observe between the two cloud provider apis you tried? 
 
 ## Provisioning Workshop
