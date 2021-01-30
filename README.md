@@ -88,8 +88,62 @@ Proof of Installing Software provided in the [Opunit Check](#opunit-checks) sect
 
 ## Provisioning Workshop
 
-[Completed Code](index.js)
+1. Get Regions
+
+    ![img](Provisioning_Workshop/DO_regions.png)
+
+2. Get Images of nyc1 Region
+
+    ![img](Provisioning_Workshop/DO_nyc1_images.png)
+
+3. Create Droplet
+
+    ![img](Provisioning_Workshop/DO_create_instance.png)
+
+4. Get Droplet Information
+
+    ![img](Provisioning_Workshop/DO_droplet_info.png)
+
+5. Ping Running Droplet's IP Address
+
+    ![img](Provisioning_Workshop/DO_ip_address.png)
+
+6. Delete Droplet
+
+    ![img](Provisioning_Workshop/DO_delete_instance.png)
+
+7. Ping Deleted Droplet's IP Address
+
+    ![img](Provisioning_Workshop/DO_recheck_ip.png)
+
+[**DigitalOcean Provisioning Code**](index.js)
 
 ## Provision with Additional Cloud Provider
 
+1. Create Key Pair
+
+    [code](AWS_Provisioning/ec2_createkeypair.js)
+
+2. Create Instance
+
+    [code](AWS_Provisioning/ec2_createinstances.js)
+
+    ![img](AWS_Provisioning/aws_create.png)
+
+3. Get All Instance Details
+
+    [code](AWS_Provisioning/ec2_describeinstances.js)
+
+4. Get Public IP Address of Instance
+
+    [code](AWS_Provisioning/ec2_getpublicipaddress.js)
+
+    Step 5 contains command line proof
+
+5. Ping Running Instance's IP Address
+
+    ![img](AWS_Provisioning/aws_ip_address.png)
+
 ## Screencast
+
+[**YouTube Link**]()
