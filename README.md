@@ -122,23 +122,21 @@ Proof of Installing Software provided in the [Opunit Check](#opunit-checks) sect
 
 1. Create Key Pair
 
-    [code](AWS_Provisioning/ec2_createkeypair.js)
+    [Code](AWS_Provisioning/ec2_createkeypair.js) to create the Key Pair needed to create an instance of a virtual machine using AWS.
 
 2. Create Instance
 
-    [code](AWS_Provisioning/ec2_createinstances.js)
+    [Code](AWS_Provisioning/ec2_createinstances.js) to create the Virtual Machine instance.
 
     ![img](AWS_Provisioning/aws_create.png)
 
 3. Get All Instance Details
 
-    [code](AWS_Provisioning/ec2_describeinstances.js)
+    [Code](AWS_Provisioning/ec2_describeinstances.js) to get details of the instance.
 
 4. Get Public IP Address of Instance
 
-    [code](AWS_Provisioning/ec2_getpublicipaddress.js)
-
-    Step 5 contains command line proof
+    [Code](AWS_Provisioning/ec2_getpublicipaddress.js) to get the public IP address of an instance given its ID. Step 5 contains command line proof.
 
 5. Ping Running Instance's IP Address
 
@@ -146,4 +144,4 @@ Proof of Installing Software provided in the [Opunit Check](#opunit-checks) sect
 
 ## Screencast
 
-[**YouTube Link**]()
+[**YouTube Link**](https://youtu.be/67hWggPckYI)
