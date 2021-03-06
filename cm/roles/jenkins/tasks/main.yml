@@ -1,0 +1,26 @@
+--- # Based on Jenkins documentation: https://www.jenkins.io/doc/book/installing/linux/#debianubuntu
+- name: Make sure open jdk is installed
+  apt:
+    name: openjdk-11-jdk
+    state: latest
+    install_recommends: no
+
+- name: Make sure wget is installed
+  apt:
+    name: wget
+    state: present
+
+- name: Add jenkins repository key
+  apt_key:
+    url: https://pkg.jenkins.io/debian-stable/jenkins.io.key
+    state: present
+
+- name: Append package repository to sources.list
+  apt_repository:
+    repo: 'deb http://pkg.jenkins-ci.org/debian-stable binary/'
+    state: present
+    
+- name: Install Jenkins
+  apt:
+    name: jenkins
+    state: present

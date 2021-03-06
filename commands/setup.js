@@ -41,6 +41,11 @@ async function run(privateKey) {
     result = sshSync('/bakerx/cm/server-init.sh', 'vagrant@192.168.33.20');
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
+    // Transforming path of the files in host to the path in VM's shared folder
+    let filePath = '/bakerx/cm/playbook.yml';
+    let inventoryPath = '/bakerx/cm/inventory.ini';
 
-
+    console.log(chalk.blueBright('Running ansible script...'));
+    result = sshSync(`/bakerx/cm/run-ansible.sh ${filePath} ${inventoryPath}`, 'vagrant@192.168.33.20');
+    if( result.error ) { process.exit( result.status ); }
 }
