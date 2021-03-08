@@ -16,4 +16,4 @@ There are two remaining issues to be implemented as part of this task:
 
 ## Automatically configure a build environment for checkbox.io
 
-## Create a build job for Jenkins
+## Create a build job for Jenkins (sawalter)
