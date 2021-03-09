@@ -2,18 +2,22 @@
 
 ## Automatically configure a Jenkins server (anmcgill)
 
-For this task, we've defined a role in ansible for installing Jenkins and its dependencies. We haven't yet configured Jenkins, so it isn't running on the correct port, and the admin user is not being initiallized, but we were able to verify that the Jenkins instance could be accessed from a browser after running "pipeline setup":
-![Jenkins Installed](screenshots/jenkinsInstalled.PNG)
-
-The code for this is currently on a separate branch: https://github.ncsu.edu/cscdevops-spring2021/DEVOPS-28/tree/configureJenkinsServer
+For this part of the assignment, we've defined a role in ansible for installing and configuring Jenkins. When running "pipeline setup," we're using ansible to install Jenkins and its dependencies, configure Jenkins to run on port 9000, disable the setup wizard for Jenkins, and install build-pipeline-plugin to support creating pipeline-style jobs.
 
 The implementation in ansible attempts to follow the Jenkins documentation for installing from the command line on Debian/Ubuntu Linux distributions: https://www.jenkins.io/doc/book/installing/linux/#debianubuntu
 
-There are two remaining issues to be implemented as part of this task:
+We were able to verify that, after running "pipeline setup," we could access Jenkins from the UI as the admin user and see that the build pipeline plugin was installed:
 
-1. Configure Jenkins and copy in the .vault-pass file: https://github.ncsu.edu/cscdevops-spring2021/DEVOPS-28/issues/4
-2. Install jenkins-plugins: https://github.ncsu.edu/cscdevops-spring2021/DEVOPS-28/issues/5
+![Jenkins Installed](screenshots/jenkinsInstalled.PNG)
 
-## Automatically configure a build environment for checkbox.io
+We still need to update the setup command to handle the .vault-pass file.
+
+In addition, we should probably revisit the implementation in ansible. What we have seems to work, but we may find there are issues with it as we make more progress on the other two sections of the milestone and begin interacting with the Jenkins server. We'll also want to make sure that we aren't violating any best practices in ansible or incorrectly integrating with the provided cm-template project.
+
+One area for improvement is that the jenkins role in ansible will restart Jenkins twice every time it's run, even if nothing has changed. It's probably worthwhile to look into whether this can be avoided, maybe through the use of [handlers](https://docs.ansible.com/ansible/latest/user_guide/playbooks_handlers.html) in ansible.
+
+## Automatically configure a build environment for checkbox.io (thwinter)
 
 ## Create a build job for Jenkins (sawalter)
+
+Once these three parts of the setup command are completed, we'll also need to implement the build command that will invoke our Jenkins job and print its log.

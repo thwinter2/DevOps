@@ -24,3 +24,68 @@
   apt:
     name: jenkins
     state: present
+
+- name: Turn off Jenkins setup wizard
+  lineinfile:
+    dest: /etc/default/jenkins
+    regexp: '^JAVA_ARGS='
+    line: 'JAVA_ARGS="-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false"'
+
+- name: Update port number for Jenkins to 9000
+  lineinfile:
+    path: /etc/default/jenkins
+    regexp: '^HTTP_PORT=8080$'
+    line: 'HTTP_PORT=9000'
+    backrefs: yes
+
+- name: Create target directory for Groovy security script
+  file:
+    path: /var/lib/jenkins/init.groovy.d
+    state: directory
+    owner: jenkins
+    group: jenkins
+    mode: 0755
+
+# Code is taken from example provided in Discord
+- name: Copy a Groovy file to configure admin user
+  template:
+    src: /bakerx/groovy-security-script
+    dest: /var/lib/jenkins/init.groovy.d/basic-security.groovy
+
+- name: Restart Jenkins
+  service:
+    name: jenkins
+    state: restarted
+
+- name: Wait for Jenkins to start up
+  uri:
+    url: http://192.168.33.20:9000/
+    status_code: 200
+    timeout: 5
+  register: jenkins_status_code
+  retries: 60
+  delay: 5
+  until: jenkins_status_code.status == 200
+
+- name: Install the pipelines plugin for Jenkins
+  jenkins_plugin:
+    name: build-pipeline-plugin
+    url: http://192.168.33.20:9000/
+    url_username: admin
+    url_password: admin
+
+# TODO: Try to use handlers to avoid duplicating these two tasks?
+- name: Restart Jenkins
+  service:
+    name: jenkins
+    state: restarted
+
+- name: Wait for Jenkins to start up
+  uri:
+    url: http://192.168.33.20:9000/
+    status_code: 200
+    timeout: 5
+  register: jenkins_status_code
+  retries: 60
+  delay: 5
+  until: jenkins_status_code.status == 200
