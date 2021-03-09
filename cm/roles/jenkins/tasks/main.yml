@@ -89,3 +89,11 @@
   retries: 60
   delay: 5
   until: jenkins_status_code.status == 200
+
+- name: Install Jenkins Job Builder
+  apt:
+    name: jenkins-job-builder
+    state: present
+
+#- name: Run Build Job - checkbox.io
+#  ansible.builtin.shell: 'jenkins-jobs update /bakerx/cm/roles/jenkins/tasks/create-build-job-checkpoint-io.yml'
