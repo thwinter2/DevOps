@@ -1,0 +1,24 @@
+- job:
+    name: Create Build Job for Checkpoint.io
+    project-type: pipeline
+    dsl: |
+      node {
+          # Clone/checkout https://github.com/chrisparnin/checkbox.io
+          stage('Source') {
+              git 'https://github.com/chrisparnin/checkbox.io'
+          }
+          stage('Build') {
+              # Install npm modules.
+              sh 'npm install --prefix ./server-side/site'
+              # Start mongodb (if not already running as service).
+              sh 'systemctl is-active --quiet service && sudo service mongodb start'
+              # sh 'if [ 'systemctl is-active --quiet service' ] ; then : else 'sudo service mongodb start' ; fi'
+              
+              # Start server-side/site/server.js.
+              sh 'cd ./server-side/site/ ; npm start'
+          }
+          stage('Test') {
+              # Successfully pass npm test (as provided in server-side/site/package.json)
+              sh 'cd ./server-side/site/ ; npm test'
+          }
+      
