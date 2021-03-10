@@ -18,6 +18,16 @@ One area for improvement is that the jenkins role in ansible will restart Jenkin
 
 ## Automatically configure a build environment for checkbox.io (thwinter)
 
+A configuration server has been created that will be used to configure the environment of the Jenkin build server. 
+
+![config-server](screenshots/config-server.png)
+
+The Web IP address has been defined in the inventory file (in the configureBuildEnvironment branch).
+
+The Ansible Playbook to automatically configure the environment has been started, and right now includes the tasks to download Node, download MongoDB, and declaring all of the necessary environment variables.
+
+I need to look into figuring out how to automatically create a MongoDB user/password using an Ansible playbook, so right now those respective environment variables are empty. Once I include that task, the config server and the build server can be linked and tested.
+
 ## Create a build job for Jenkins (sawalter)
 
 We have the script written to configure the build job.  Still need to figure out how to make the authentication work automatically.  The screenshot below shows JJB creating the job and the resulting build in Jenkins.  The build currently fails because we have not yet installed all of the prerequisite services.
