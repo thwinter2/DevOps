@@ -22,7 +22,7 @@ A configuration server has been created that will be used to configure the envir
 
 ![config-server](screenshots/config-server.png)
 
-The Web IP address has been defined in the inventory file (in the configureBuildEnvironment branch).
+The Web IP address has been defined in the inventory file.
 
 The Ansible Playbook to automatically configure the environment has been started, and right now includes the tasks to download Node, download MongoDB, and declaring all of the necessary environment variables.
 
