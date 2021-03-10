@@ -20,4 +20,13 @@ One area for improvement is that the jenkins role in ansible will restart Jenkin
 
 ## Create a build job for Jenkins (sawalter)
 
+We have the script written to configure the build job.  Still need to figure out how to make the authentication work automatically.  The screenshot below shows JJB creating the job and the resulting build in Jenkins.  The build currently fails because we have not yet installed all of the prerequisite services.
+
+![Creating Build Job with JJB](screenshots/buildjob.png)
+
+
+
+
+
+
 Once these three parts of the setup command are completed, we'll also need to implement the build command that will invoke our Jenkins job and print its log.
