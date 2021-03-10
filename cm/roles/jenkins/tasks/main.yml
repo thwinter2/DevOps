@@ -103,4 +103,13 @@
     state: present
 
 #- name: Run Build Job - checkbox.io
-#  ansible.builtin.shell: 'jenkins-jobs --conf /bakerx/cm/jenkins_jobs.ini update /bakerx/cm/roles/jenkins/tasks/create-build-job-checkpoint-io.yml'
+#  shell: 'jenkins-jobs --conf /bakerx/cm/jenkins_jobs.ini update /bakerx/cm/roles/jenkins/tasks/create-build-job-checkpoint-io.yml'
+
+- name: Create Build Job XML with JJB - checkbox.io
+  shell: jenkins-jobs test -o ./ /bakerx/cm/roles/jenkins/tasks/create-build-job-checkpoint-io.yml
+  
+- name: Create Build Job - checkbox.io
+  shell: java -jar /bakerx/jenkins-cli.jar -s http://admin:admin@192.168.33.20:9000/ create-job checkio-build-job<./checkio-build-job
+
+- name: Run Build Job - checkbox.io
+  shell: java -jar /bakerx/jenkins-cli.jar -s http://admin:admin@192.168.33.20:9000/ build checkio-build-job
