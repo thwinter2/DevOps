@@ -64,12 +64,12 @@
     timeout: 5
   register: jenkins_status_code
   retries: 60
-  delay: 5
+  delay: 20
   until: jenkins_status_code.status == 200
 
 - name: Install the pipelines plugin for Jenkins
   jenkins_plugin:
-    name: build-pipeline-plugin
+    name: workflow-aggregator
     url: http://192.168.33.20:9000/
     url_username: admin
     url_password: admin
