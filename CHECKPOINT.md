@@ -22,7 +22,7 @@ One area for improvement is that the jenkins role in ansible will restart Jenkin
 
 We have the script written to configure the build job.  Still need to figure out how to make the authentication work automatically.  The screenshot below shows JJB creating the job and the resulting build in Jenkins.  The build currently fails because we have not yet installed all of the prerequisite services.
 
-![Creating Build Job with JJB](screenshots/buildjob.PNG)
+![Creating Build Job with JJB](screenshots/buildjob.png)
 
 
 
