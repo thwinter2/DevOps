@@ -73,6 +73,13 @@
     url: http://192.168.33.20:9000/
     url_username: admin
     url_password: admin
+    
+- name: Install the git plugin for Jenkins
+  jenkins_plugin:
+    name: git
+    url: http://192.168.33.20:9000/
+    url_username: admin
+    url_password: admin
 
 # TODO: Try to use handlers to avoid duplicating these two tasks?
 - name: Restart Jenkins
@@ -96,4 +103,4 @@
     state: present
 
 #- name: Run Build Job - checkbox.io
-#  ansible.builtin.shell: 'jenkins-jobs update /bakerx/cm/roles/jenkins/tasks/create-build-job-checkpoint-io.yml'
+#  ansible.builtin.shell: 'jenkins-jobs --conf /bakerx/cm/jenkins_jobs.ini update /bakerx/cm/roles/jenkins/tasks/create-build-job-checkpoint-io.yml'
