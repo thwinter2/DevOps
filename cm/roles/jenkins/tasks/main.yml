@@ -24,12 +24,14 @@
   apt:
     name: jenkins
     state: present
+  notify: Restart Jenkins
 
 - name: Turn off Jenkins setup wizard
   lineinfile:
     dest: /etc/default/jenkins
     regexp: '^JAVA_ARGS='
     line: 'JAVA_ARGS="-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false"'
+  notify: Restart Jenkins
 
 - name: Update port number for Jenkins to 9000
   lineinfile:
@@ -37,6 +39,7 @@
     regexp: '^HTTP_PORT=8080$'
     line: 'HTTP_PORT=9000'
     backrefs: yes
+  notify: Restart Jenkins
 
 - name: Create target directory for Groovy security script
   file:
@@ -51,52 +54,26 @@
   template:
     src: /bakerx/groovy-security-script
     dest: /var/lib/jenkins/init.groovy.d/basic-security.groovy
+  notify: Restart Jenkins
 
-- name: Restart Jenkins
-  service:
-    name: jenkins
-    state: restarted
+# Trigger restart before installing plugins
+# See https://docs.ansible.com/ansible/latest/user_guide/playbooks_handlers.html#controlling-when-handlers-run
+- name: Flush handlers to trigger Jenkins restart
+  meta: flush_handlers
 
-- name: Wait for Jenkins to start up
-  uri:
-    url: http://192.168.33.20:9000/
-    status_code: 200
-    timeout: 5
-  register: jenkins_status_code
-  retries: 60
-  delay: 20
-  until: jenkins_status_code.status == 200
-
-- name: Install the pipelines plugin for Jenkins
+- name: Install Jenkins plugins
   jenkins_plugin:
-    name: workflow-aggregator
+    name: '{{ item.key }}'
     url: http://192.168.33.20:9000/
     url_username: admin
     url_password: admin
     timeout: 120
-    
-- name: Install the git plugin for Jenkins
-  jenkins_plugin:
-    name: git
-    url: http://192.168.33.20:9000/
-    url_username: admin
-    url_password: admin
-
-# TODO: Try to use handlers to avoid duplicating these two tasks?
-- name: Restart Jenkins
-  service:
-    name: jenkins
-    state: restarted
-
-- name: Wait for Jenkins to start up
-  uri:
-    url: http://192.168.33.20:9000/
-    status_code: 200
-    timeout: 5
-  register: jenkins_status_code
-  retries: 60
-  delay: 5
-  until: jenkins_status_code.status == 200
+  notify: Restart Jenkins
+  with_items:
+    - { key: 'workflow-aggregator' }
+    - { key: 'git' }
+    - { key: 'ws-cleanup' }
+    - { key: 'pipeline-stage-view' }
 
 - name: Install Jenkins Job Builder
   apt:
