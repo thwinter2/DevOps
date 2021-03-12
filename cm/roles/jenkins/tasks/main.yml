@@ -105,6 +105,15 @@
 #- name: Run Build Job - checkbox.io
 #  shell: 'jenkins-jobs --conf /bakerx/cm/jenkins_jobs.ini update /bakerx/cm/roles/jenkins/tasks/create-build-job-checkpoint-io.yml'
 
+- name: Install nodejs
+  apt: pkg='nodejs' state='present'
+
+- name: start MongoDB if not already running
+  service:
+    name=mongodb
+    state=started
+    enabled=yes
+
 - name: Create Build Job XML with JJB - checkbox.io
   shell: jenkins-jobs test -o ./ /bakerx/cm/roles/jenkins/tasks/create-build-job-checkpoint-io.yml
   

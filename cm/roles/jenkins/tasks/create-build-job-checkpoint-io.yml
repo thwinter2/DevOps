@@ -8,7 +8,6 @@
           }
           stage('Build') {
               sh 'npm install --prefix ./server-side/site'
-              sh 'systemctl is-active --quiet mongodb && sudo service mongodb start'
               sh 'cd ./server-side/site/ ; npm start'
           }
           stage('Test') {
