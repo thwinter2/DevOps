@@ -1,5 +1,5 @@
 - job:
-    name: Create Build Job for Checkpoint.io
+    name: checkio-build-job
     project-type: pipeline
     dsl: |
       node {

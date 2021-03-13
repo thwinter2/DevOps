@@ -97,6 +97,12 @@
   delay: 5
   until: jenkins_status_code.status == 200
 
+- name: Install nodejs
+  apt: pkg='nodejs' state='present'
+    
+- name: Install MongoDB
+  apt: pkg='mongodb' state='present'
+
 - name: Install Jenkins Job Builder
   apt:
     name: jenkins-job-builder
