@@ -73,6 +73,7 @@
     url: http://192.168.33.20:9000/
     url_username: admin
     url_password: admin
+    timeout: 120
     
 - name: Install the git plugin for Jenkins
   jenkins_plugin:
