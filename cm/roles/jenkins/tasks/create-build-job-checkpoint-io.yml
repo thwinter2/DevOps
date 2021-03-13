@@ -8,7 +8,7 @@
           }
           stage('Build') {
               sh 'npm install --prefix ./server-side/site'
-              sh 'cd ./server-side/site/ ; npm start'
+              sh 'cd ./server-side/site/ ; npm start &'
           }
           stage('Test') {
               sh 'cd ./server-side/site/ ; npm test'
