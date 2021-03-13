@@ -1,0 +1,28 @@
+---
+- hosts: web
+
+  tasks:
+    - name: Install nodejs
+      apt: pkg='nodejs' state='present'
+    - name: Install MongoDB
+      apt: pkg='mongodb' state='present'
+
+    - name: Define Environment variables
+      environment:
+        APP_PORT: 3002
+        MONGO_PORT: 27017
+        MONGO_USER: team28
+        MONGO_PASSWORD: csc519
+        MONGO_IP: localhost
+
+    - name: Create MongoDB user and password
+      mongodb_user:
+        login_host: MONGO_IP
+        login_port: MONGO_PORT
+        database: admin
+        user: MONGO_USER
+        password: MONGO_PASSWORD
+        state: present
+        roles:
+          - db: local
+            role: readWriteAnyDatabase
