@@ -1,5 +1,5 @@
 - job:
-    name: checkio-build-job
+    name: checkbox.io
     project-type: pipeline
     dsl: |
       node {
