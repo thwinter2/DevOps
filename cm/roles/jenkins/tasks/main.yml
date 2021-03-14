@@ -101,6 +101,9 @@
     name=mongodb
     state=started
     enabled=yes
+    
+- name: Install npm Jenkins plugin
+  shell: npm i jenkins
 
 # Deprecated. These commands can be used to create and start the checkbox.io build job using Jenkins-cli during pipeline setup.
 #- name: Create Build Job XML with JJB - checkbox.io
