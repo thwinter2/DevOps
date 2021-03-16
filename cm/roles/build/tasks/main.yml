@@ -10,15 +10,8 @@
     state=started
     enabled=yes
     
-- name: Install npm Jenkins plugin
-  npm:
-    name: jenkins
-    global: yes
-#  shell: npm i jenkins
-  
 - name: Install npm pm2 plugin
   npm:
     name: pm2
     global: yes
-#  shell: npm install pm2 -g
 
