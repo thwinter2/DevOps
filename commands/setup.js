@@ -9,28 +9,18 @@ const sshSync = require('../lib/ssh');
 
 exports.command = 'setup';
 exports.desc = 'Provision and configure the configuration server';
-exports.builder = yargs => {
-    yargs.options({
-        privateKey: {
-            describe: 'Install the provided private key on the configuration server',
-            type: 'string'
-        }
-    });
-};
-
 
 exports.handler = async argv => {
-    const { privateKey } = argv;
 
     (async () => {
 
-        await run( privateKey );
+        await run();
 
     })();
 
 };
 
-async function run(privateKey) {
+async function run() {
 
     console.log(chalk.greenBright('Installing configuration server!'));
 
@@ -48,7 +38,7 @@ async function run(privateKey) {
         result = scpSync('.vault-pass', 'vagrant@192.168.33.20:')
         if( result.error ) { console.log(result.error); process.exit( result.status ); }
     } else {
-        console.log(chalk.blueBright('A .vault-pass file does not exist, so copying the file will be skipped.'));
+        console.log("You must have a .vault-pass file at the root of your project with the ansible vault password."); process.exit( 1 );
     }
 
     // Transforming path of the files in host to the path in VM's shared folder
