@@ -4,8 +4,8 @@
     name: jenkins-job-builder
     state: present
 
-- name: Install npm
-  apt: pkg='npm' state='present'
+#- name: Install npm
+#  apt: pkg='npm' state='present'
 
 - name: start MongoDB if not already running
   service:
