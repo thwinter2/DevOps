@@ -1,40 +1,85 @@
 ---
-#- name: Add nodejs apt key
-#  apt_key:
-#    url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
-#    state: present
+- name: Add nodejs apt key
+  apt_key:
+    url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+    state: present
 
-#- name: Add nodejs 14.x ppa for apt repo
-#  apt_repository:
-#    repo: 'deb https://deb.nodesource.com/node_14.x focal main'
-#    update_cache: yes
+- name: Add nodejs 14.x ppa for apt repo
+  apt_repository:
+    repo: 'deb https://deb.nodesource.com/node_14.x focal main'
+    update_cache: yes
 
 - name: Install nodejs
   apt: 
     pkg: nodejs
     state: present
 
-#- name: Import MongoDB public key
-#  apt_key: 
-#    url: https://www.mongodb.org/static/pgp/server-4.4.asc
-#    state: present
+- name: Import MongoDB public key
+  apt_key: 
+    url: https://www.mongodb.org/static/pgp/server-4.4.asc
+    state: present
 
-#- name: Add MongoDB Repository
-#  apt_repository: 
-#    repo: 'deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse'
-#    state: present
+- name: Add MongoDB Repository
+  apt_repository: 
+    repo: 'deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse'
+    state: present
 
 - name: Install MongoDB
   apt: 
-    pkg: mongodb
+    pkg: mongodb-org
     state: latest
     update_cache: yes
-  notify: 
-  - start mongodb
+
+- name: Start mongodb
+  service:
+    name: mongod
+    state: started
+
+- name: Install pymongo through pip
+  pip:
+    name: pymongo
+
+- name: Create the user administrator
+  mongodb_user:
+    database: admin
+    name: admin
+    password: admin
+    roles: 
+      - db: admin
+        role: userAdminAnyDatabase
+      - readWriteAnyDatabase
+
+- name: Enable auth for mongodb via config file
+  lineinfile:
+    path: /etc/mongod.conf
+    regexp: '^#auth = true$'
+    line: 'auth = true'
+    backrefs: yes
+
+- name: Restart mongodb
+  service:
+    name: mongod
+    state: restarted
+
+- name: Create mongo user
+  mongodb_user:
+    login_user: admin
+    login_password: admin
+    database: admin
+    name: mongo
+    password: mongo
+    roles: readWrite
+    state: present
 
 - name: Define Environment variables
-  shell: export APP_PORT=3002
-  shell: export MONGO_PORT=27017
-  shell: export MONGO_USER="team28"
-  shell: export MONGO_PASSWORD="csc519"
-  shell: export MONGO_IP="localhost"
+  lineinfile:
+    path: /etc/environment
+    line: '{{ item.key }}'
+    state: present
+  with_items:
+    - { key: 'APP_PORT=3002' }
+    - { key: 'MONGO_PORT=27017' }
+    - { key: 'MONGO_USER="mongo"' }
+    - { key: 'MONGO_PASSWORD="mongo"' }
+    - { key: 'MONGO_IP="localhost"' }
+
