@@ -14,11 +14,13 @@ exports.builder = yargs => {
     yargs.options({
         u: {
             describe: 'The username for the jenkins server',
-            type: 'string'
+            type: 'string',
+            default: 'admin'
         },
         p: {
             describe: 'The password for the jenkins server',
-            type: 'string'
+            type: 'string',
+            default: 'admin'
         }
     });
 };
@@ -94,13 +96,7 @@ async function startBuild(buildName)
 
 async function run(u, p, name) {
     
-    if( u == null || p == null || name == null ) { console.log("You must specify a build name and Jenkins username and password.  Run \"pipeline build --help\" for more information."); process.exit( 1 ); }
-    
-    console.log(chalk.greenBright(`Building ${name} job with JJB!`));
-
-    console.log(chalk.blueBright(`Creating Jenkins Job for ${name}...`));
-    result = sshSync(`/bakerx/cm/build-scripts/${name}.sh ${name} ${u} ${p}`, 'vagrant@192.168.33.20');
-    if( result.error ) { console.log(result.error); process.exit( result.status ); }
+    if( name == null ) { console.log("You must specify a build name Run \"pipeline build --help\" for more information."); process.exit( 1 ); }
     
     console.log(chalk.blueBright(`Starting ${name} Build Job...`));
     await startBuild(name);

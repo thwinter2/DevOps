@@ -9,5 +9,7 @@ set -x
 # Script used to initialize your ansible server after provisioning.
 sudo add-apt-repository ppa:ansible/ansible -y
 sudo apt-get update
-sudo apt-get install ansible -y
+sudo apt install python3-pip -y
+sudo pip3 install ansible
+#sudo apt-get install ansible -y
 

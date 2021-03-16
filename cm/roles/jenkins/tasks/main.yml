@@ -78,32 +78,11 @@
 # Trigger restart after installing plugins
 - name: Flush handlers to trigger Jenkins restart
   meta: flush_handlers
-    
-- name: Install nodejs
-  apt: pkg='nodejs' state='present'
-    
-- name: Install MongoDB
-  apt: pkg='mongodb' state='present'
 
-- name: Install Jenkins Job Builder
-  apt:
-    name: jenkins-job-builder
-    state: present
 
 #- name: Run Build Job - checkbox.io
 #  shell: 'jenkins-jobs --conf /bakerx/cm/jenkins_jobs.ini update /bakerx/cm/roles/jenkins/tasks/create-build-job-checkpoint-io.yml'
 
-- name: Install npm
-  apt: pkg='npm' state='present'
-
-- name: start MongoDB if not already running
-  service:
-    name=mongodb
-    state=started
-    enabled=yes
-    
-- name: Install npm Jenkins plugin
-  shell: npm i jenkins
 
 # Deprecated. These commands can be used to create and start the checkbox.io build job using Jenkins-cli during pipeline setup.
 #- name: Create Build Job XML with JJB - checkbox.io
