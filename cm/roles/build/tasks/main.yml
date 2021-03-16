@@ -9,7 +9,7 @@
     name=mongod
     state=started
     enabled=yes
-    
+
 - name: Install npm pm2 plugin
   npm:
     name: pm2
