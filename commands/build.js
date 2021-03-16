@@ -14,11 +14,13 @@ exports.builder = yargs => {
     yargs.options({
         u: {
             describe: 'The username for the jenkins server',
-            type: 'string'
+            type: 'string',
+            default: 'admin'
         },
         p: {
             describe: 'The password for the jenkins server',
-            type: 'string'
+            type: 'string',
+            default: 'admin'
         }
     });
 };
