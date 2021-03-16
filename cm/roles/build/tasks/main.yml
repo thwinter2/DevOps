@@ -9,7 +9,9 @@
     name=mongod
     state=started
     enabled=yes
-  
+
 - name: Install npm pm2 plugin
-  shell: npm install pm2 -g
+  npm:
+    name: pm2
+    global: yes
 
