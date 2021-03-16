@@ -1,0 +1,18 @@
+---
+- name: Install Jenkins Job Builder
+  apt:
+    name: jenkins-job-builder
+    state: present
+
+- name: Install npm
+  apt: pkg='npm' state='present'
+
+- name: start MongoDB if not already running
+  service:
+    name=mongodb
+    state=started
+    enabled=yes
+    
+- name: Install npm Jenkins plugin
+  shell: npm i jenkins
+
