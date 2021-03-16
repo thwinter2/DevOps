@@ -68,7 +68,7 @@ async function triggerBuild(job)
     return buildId;
 }
 
-// This will stream the Jenkins log output to the console until it completes or fails
+// This will stream the Jenkins log output to the console until the job completes or fails
 async function logBuildOutput(stream) {
     return new Promise((resolve, reject) => {
         stream.on('data', (data) => console.log(data));
