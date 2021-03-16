@@ -58,4 +58,11 @@ async function run(privateKey) {
     console.log(chalk.blueBright('Running ansible script...'));
     result = sshSync(`/bakerx/cm/run-ansible.sh ${filePath} ${inventoryPath}`, 'vagrant@192.168.33.20');
     if( result.error ) { process.exit( result.status ); }
+    
+    console.log(chalk.greenBright(`Building checkbox.io job with JJB!`));
+
+    console.log(chalk.blueBright(`Creating Jenkins Job for checkbox.io...`));
+    result = sshSync(`/bakerx/cm/build-scripts/checkbox.io.sh checkbox.io admin admin`, 'vagrant@192.168.33.20');
+    if( result.error ) { console.log(result.error); process.exit( result.status ); }
+    
 }
