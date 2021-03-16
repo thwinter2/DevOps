@@ -49,6 +49,12 @@
     group: jenkins
     mode: 0755
 
+- name: Save Jenkins admin password to environment
+  lineinfile:
+    path: /etc/environment
+    line: 'JENKINS_ADMIN_PASSWORD="{{ vault_jenkins_admin_password }}"'
+    state: present
+
 # Code is taken from example provided in Discord
 - name: Copy a Groovy file to configure admin user
   template:
