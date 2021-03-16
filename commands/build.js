@@ -94,7 +94,7 @@ async function startBuild(buildName)
 
 async function run(u, p, name) {
     
-    if( u == null || p == null || name == null ) { console.log("You must specify a build name and Jenkins username and password.  Run \"pipeline build --help\" for more information."); process.exit( 1 ); }
+    if( name == null ) { console.log("You must specify a build name Run \"pipeline build --help\" for more information."); process.exit( 1 ); }
     
     console.log(chalk.greenBright(`Building ${name} job with JJB!`));
 
