@@ -5,6 +5,6 @@
 - hosts: jenkins
   become: true
   roles:
-    - jenkins
     - environment
+    - jenkins
     - build

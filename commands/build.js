@@ -39,15 +39,6 @@ exports.handler = async argv => {
 
 
 // CODE ADAPTED FROM Jenkins Workshop to start build with npm
-async function getBuildStatus(job, id) {
-    return new Promise(async function(resolve, reject)
-    {
-        console.log(`Fetching ${job}: ${id}`);
-        let result = await jenkins.build.get(job, id);
-        resolve(result);
-    });
-}
-
 async function waitOnQueue(id) {
     return new Promise(function(resolve, reject)
     {
@@ -77,20 +68,24 @@ async function triggerBuild(job)
     return buildId;
 }
 
+// This will stream the Jenkins log output to the console until the job completes or fails
+async function logBuildOutput(stream) {
+    return new Promise((resolve, reject) => {
+        stream.on('data', (data) => console.log(data));
+        stream.on('error', (err) => reject(err));
+        stream.on('end', () => resolve());
+    })
+}
+
 async function startBuild(buildName)
 {
-
     console.log('Triggering build.')
     let buildId = await triggerBuild(buildName).catch( e => console.log(e));
 
     console.log(`Received ${buildId}`);
-    let build = await getBuildStatus(buildName, buildId);
-    console.log( `Build result: ${build.result}` );
 
     console.log(`Build output`);
-    let output = await jenkins.build.log({name: buildName, number: buildId});
-    console.log( output );
-
+    logBuildOutput(jenkins.build.logStream({name: buildName, number: buildId}));
 }
 // END CODE FROM JENKINS WORKSHOP
 
