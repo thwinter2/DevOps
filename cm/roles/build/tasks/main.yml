@@ -11,8 +11,14 @@
     enabled=yes
     
 - name: Install npm Jenkins plugin
-  shell: npm i jenkins
+  npm:
+    name: jenkins
+    global: yes
+#  shell: npm i jenkins
   
 - name: Install npm pm2 plugin
-  shell: npm install pm2 -g
+  npm:
+    name: pm2
+    global: yes
+#  shell: npm install pm2 -g
 
