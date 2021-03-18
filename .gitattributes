@@ -1,0 +1,2 @@
+# Enforce unix line endings for shell files
+*.sh text eol=lf
