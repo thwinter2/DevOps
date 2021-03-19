@@ -28,7 +28,19 @@ One of the challenges we encountered as part of implementing this phase of the b
 
 The other issue we encountered was that Jenkins could take a while to start up on our machines, even though we were defining a task to wait on it. To work around this, we increased the initial delay in our polling task.
 
+Another issue we faced was the formatting of the shell scripts. We were working on different host operating systems, so the shell scripts were not running properly being formatted as dos, so we created a [.gitattributes](.gitattributes) file to enforce the unix format on the host OS. 
+
 ### Automatically configure a build environment for checkbox.io (thwinter)
+
+We used Ansible to automatically configure the build environment for the checkbox.io application. The Ansible logic is stored in the the ["Environment" Role](cm/roles/environment/tasks/main.yml) folder. The tasks are to setup and install the necessary software and environment variables; the handler is used to run the MongoDB once it has been installed.
+
+The environment is automatically built when running the command "pipeline setup". The [playbook](cm/playbook.yml) contains the environment role, which prompts the tasks to run when the setup command is run. The checkbox.io application requires MongoDB, Node.js, and various environment variables to be declared. 
+
+The general way to install Node and MongoDB using Ansible is to retrieve the public installation key, add the repository, then install the package. 
+
+We were also tasked with automatically creating a MongoDB user. We utilized the community version of MongoDB in order to achieve this, which is also why we installed the mongo-org version of MongoDB. To use the mongodb_user command in Ansible, the python package pymongo had to be installed. We simply added that installation step as an Ansible task.
+
+The environment variables were stored in the VM's /etc/environment file. We designated that path using Ansible and sent the various variables as a collection of keys. Each key is the variable name being initialized with its value. The password for the MongoDB user is obscured for security reasons by utilizing the .vault-pass file, which we could directly call as the value of the MONGO_PASSWORD environment variable.
 
 ### Create a build job for Jenkins (sawalter)
 
