@@ -32,7 +32,7 @@ Another issue we faced was the formatting of the shell scripts. We were working 
 
 ### Automatically configure a build environment for checkbox.io (thwinter)
 
-We used Ansible to automatically configure the build environment for the checkbox.io application. The Ansible logic is stored in the the ["Environment" Role](cm/roles/environment/tasks/main.yml) folder. The tasks are to setup and and install the necessary software and environment variables; the handler is used to run the MongoDB once it has been installed.
+We used Ansible to automatically configure the build environment for the checkbox.io application. The Ansible logic is stored in the the ["Environment" Role](cm/roles/environment/tasks/main.yml) folder. The tasks are to setup and install the necessary software and environment variables; the handler is used to run the MongoDB once it has been installed.
 
 The environment is automatically built when running the command "pipeline setup". The [playbook](cm/playbook.yml) contains the environment role, which prompts the tasks to run when the setup command is run. The checkbox.io application requires MongoDB, Node.js, and various environment variables to be declared. 
 
