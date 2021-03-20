@@ -9,6 +9,15 @@ Issue board for this milestone: https://github.ncsu.edu/cscdevops-spring2021/DEV
 
 Here is a link to the screencast demonstrating our implementation for this milestone: https://drive.google.com/file/d/1a2_ua63exgYSTw8thK730EMH2PE94JEx/view?usp=sharing
 
+### Instructions for running the code
+
+1. Clone the git repository locally.
+2. In the project directory, run `npm install`
+3. In the project directory, run `npm link`
+4. Create a file in the project directory named ".vault-pass".  Inside the file, store the password for the ansible vault.
+5. In the project directory, run the command `pipeline setup`.
+6. In the project directory, run the command `pipeline build checkbox.io`.  Optionally, you may specify a username and password for Jenkins with the command `pipeline build checkbox.io -u <jenkins-user-id> -p <jenkins-password>`.
+
 ### Automatically configure a Jenkins server (anmcgill)
 
 We're following this documentation in order to install Jenkins:
