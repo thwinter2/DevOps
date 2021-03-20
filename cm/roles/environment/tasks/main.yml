@@ -29,45 +29,21 @@
     pkg: mongodb-org
     state: latest
     update_cache: yes
-
-- name: Start mongodb
-  service:
-    name: mongod
-    state: started
+  notify: 
+  - Start mongodb
 
 - name: Install pymongo through pip
   pip:
     name: pymongo
 
-- name: Create the user administrator
-  mongodb_user:
-    database: admin
-    name: admin
-    password: admin
-    roles: 
-      - db: admin
-        role: userAdminAnyDatabase
-      - readWriteAnyDatabase
-
-- name: Enable auth for mongodb via config file
-  lineinfile:
-    path: /etc/mongod.conf
-    regexp: '^#auth = true$'
-    line: 'auth = true'
-    backrefs: yes
-
-- name: Restart mongodb
-  service:
-    name: mongod
-    state: restarted
+- name: Flush Handlers
+  meta: flush_handlers
 
 - name: Create mongo user
   mongodb_user:
-    login_user: admin
-    login_password: admin
     database: admin
     name: mongo
-    password: mongo
+    password: '{{ vault_db_mongo_password }}'
     roles: readWrite
     state: present
 
@@ -80,6 +56,5 @@
     - { key: 'APP_PORT=3002' }
     - { key: 'MONGO_PORT=27017' }
     - { key: 'MONGO_USER="mongo"' }
-    - { key: 'MONGO_PASSWORD="mongo"' }
+    - { key: 'MONGO_PASSWORD="{{ vault_db_mongo_password }}"'}
     - { key: 'MONGO_IP="localhost"' }
-

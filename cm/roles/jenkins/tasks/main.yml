@@ -49,6 +49,12 @@
     group: jenkins
     mode: 0755
 
+- name: Save Jenkins admin password to environment
+  lineinfile:
+    path: /etc/environment
+    line: 'JENKINS_ADMIN_PASSWORD="{{ vault_jenkins_admin_password }}"'
+    state: present
+
 # Code is taken from example provided in Discord
 - name: Copy a Groovy file to configure admin user
   template:
@@ -66,7 +72,7 @@
     name: '{{ item.key }}'
     url: http://192.168.33.20:9000/
     url_username: admin
-    url_password: admin
+    url_password: '{{ vault_jenkins_admin_password }}'
     timeout: 120
   notify: Restart Jenkins
   with_items:
@@ -78,18 +84,3 @@
 # Trigger restart after installing plugins
 - name: Flush handlers to trigger Jenkins restart
   meta: flush_handlers
-
-
-#- name: Run Build Job - checkbox.io
-#  shell: 'jenkins-jobs --conf /bakerx/cm/jenkins_jobs.ini update /bakerx/cm/roles/jenkins/tasks/create-build-job-checkpoint-io.yml'
-
-
-# Deprecated. These commands can be used to create and start the checkbox.io build job using Jenkins-cli during pipeline setup.
-#- name: Create Build Job XML with JJB - checkbox.io
-#  shell: jenkins-jobs test -o ./ /bakerx/cm/roles/jenkins/tasks/create-build-job-checkpoint-io.yml
-  
-#- name: Create Build Job - checkbox.io
-#  shell: java -jar /bakerx/jenkins-cli.jar -s http://admin:admin@192.168.33.20:9000/ create-job checkio-build-job<./checkio-build-job
-
-#- name: Run Build Job - checkbox.io
-#  shell: java -jar /bakerx/jenkins-cli.jar -s http://admin:admin@192.168.33.20:9000/ build checkio-build-job

@@ -1,9 +1,5 @@
-const child = require('child_process');
 const chalk = require('chalk');
-const path = require('path');
-const os = require('os');
-const fs = require('fs');
-const jenkins = require('jenkins')({ baseUrl: 'http://admin:admin@192.168.33.20:9000', crumbIssuer: true, promisify: true });
+var jenkins
 
 const scpSync = require('../lib/scp');
 const sshSync = require('../lib/ssh');
@@ -92,7 +88,7 @@ async function startBuild(buildName)
 async function run(u, p, name) {
     
     if( name == null ) { console.log("You must specify a build name Run \"pipeline build --help\" for more information."); process.exit( 1 ); }
-    
+    jenkins = require('jenkins')({ baseUrl: `http://${u}:${p}@192.168.33.20:9000`, crumbIssuer: true, promisify: true });
     console.log(chalk.blueBright(`Starting ${name} Build Job...`));
     await startBuild(name);
 
