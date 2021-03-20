@@ -4,6 +4,7 @@
     dsl: |
       node {
           stage('Source') {
+              cleanWs()
               git 'https://github.com/chrisparnin/checkbox.io'
           }
           stage('Build') {
@@ -14,4 +15,3 @@
               sh 'cd ./server-side/site/ ; npm test'
           }
       }
-      

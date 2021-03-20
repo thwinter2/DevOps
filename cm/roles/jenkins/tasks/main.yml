@@ -5,11 +5,6 @@
     state: latest
     install_recommends: no
 
-- name: Make sure wget is installed
-  apt:
-    name: wget
-    state: present
-
 - name: Add jenkins repository key
   apt_key:
     url: https://pkg.jenkins.io/debian-stable/jenkins.io.key
