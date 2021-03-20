@@ -44,4 +44,16 @@ The environment variables were stored in the VM's /etc/environment file. We desi
 
 ### Create a build job for Jenkins (sawalter)
 
+In order to create a Jenkins build job for the checkbox.io app, we first created an additional [Ansible role for the build tasks](/cm/roles/build/tasks/main.yml).  In this role, we install Jenkins Job Builder (JJB), which we utilized to create the build job.  We then ensure that MongoDB is running, as it is a prerequisite for the checkbox.io app.  Finally, we install the pm2 add, which is utilized by the build to keep the checkbox app running.
+
+We then created a pipeline style [JJB job definition file](/cm/build-scripts/jjb-jobs/checkbox.io.yml) to define the steps in building the checkbox.io build job.  This includes a Source stage that clones the git repository into the jenkins workspace, followed by a Build stage that installs the node app and starts the app’s server using pm2.  Finally, a Test stage is run that initiates the Mocha tests included with the app.
+
+In order to create the job in Jenkins, we modified the [pipeline setup command](/cm/commands/setup.js) to have it run a [script](/cm/build-scripts/checkbox.io.sh) to run the JJB job we had previously defined.  The script utilizes curl to obtain a CSFR crumb, and ultimately an API key for jenkins, which it then uses for authentication when creating the job.
+
+#### Challenges
+
+The biggest challenge we faced during this portion was figuring out how to authenticate with Jenkins.  The software versions we used did not seem to allow authentication with the plain text password for Jenkins, but instead required the use of an API key.  This was easy to generate manually in the Jenkins web interface, but generating and obtaining it programmatically proved much more challenging.  The Jenkins API does not provide an endpoint for retrieving the API token.  After researching several articles and message boards, we were eventually able to determine how to generate and obtain the key using curl.
+
 ### Define build command for running Jenkins job (sawalter)
+
+In order to run the checkbox.io build job, we created a new pipeline command, [build](/cm/commands/build.js).  First, we used yargs to define and parse the command line options.  These include a required argument to specify the name of the job to build, followed by optional parameters for a jenkins username and password, which include default values when not specified.  We then modified the code from the Jenkins workshop for running a build job in jenkins.
