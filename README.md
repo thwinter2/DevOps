@@ -48,7 +48,7 @@ In order to create a Jenkins build job for the checkbox.io app, we first created
 
 We then created a pipeline style [JJB job definition file](/cm/build-scripts/jjb-jobs/checkbox.io.yml) to define the steps in building the checkbox.io build job.  This includes a Source stage that clones the git repository into the jenkins workspace, followed by a Build stage that installs the node app and starts the app’s server using pm2.  Finally, a Test stage is run that initiates the Mocha tests included with the app.
 
-In order to create the job in Jenkins, we modified the [pipeline setup command](/cm/commands/setup.js) to have it run a [script](/cm/build-scripts/checkbox.io.sh) to run the JJB job we had previously defined.  The script utilizes curl to obtain a CSFR crumb, and ultimately an API key for jenkins, which it then uses for authentication when creating the job.
+In order to create the job in Jenkins, we modified the [pipeline setup command](/commands/setup.js) to have it run a [script](/cm/build-scripts/checkbox.io.sh) to run the JJB job we had previously defined.  The script utilizes curl to obtain a CSFR crumb, and ultimately an API key for jenkins, which it then uses for authentication when creating the job.
 
 #### Challenges
 
@@ -56,4 +56,4 @@ The biggest challenge we faced during this portion was figuring out how to authe
 
 ### Define build command for running Jenkins job (sawalter)
 
-In order to run the checkbox.io build job, we created a new pipeline command, [build](/cm/commands/build.js).  First, we used yargs to define and parse the command line options.  These include a required argument to specify the name of the job to build, followed by optional parameters for a jenkins username and password, which include default values when not specified.  We then modified the code from the Jenkins workshop for running a build job in jenkins.
+In order to run the checkbox.io build job, we created a new pipeline command, [build](/commands/build.js).  First, we used yargs to define and parse the command line options.  These include a required argument to specify the name of the job to build, followed by optional parameters for a jenkins username and password, which include default values when not specified.  We then modified the code from the Jenkins workshop for running a build job in jenkins.
