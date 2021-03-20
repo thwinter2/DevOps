@@ -7,7 +7,7 @@ Issue board for this milestone: https://github.ncsu.edu/cscdevops-spring2021/DEV
 
 ### Screencast
 
-Here is a link to the screencast demonstrating our implementation for this milestone: TODO
+Here is a link to the screencast demonstrating our implementation for this milestone: https://drive.google.com/file/d/1a2_ua63exgYSTw8thK730EMH2PE94JEx/view?usp=sharing
 
 ### Automatically configure a Jenkins server (anmcgill)
 
