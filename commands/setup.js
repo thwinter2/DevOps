@@ -9,6 +9,20 @@ const sshSync = require('../lib/ssh');
 
 exports.command = 'setup';
 exports.desc = 'Provision and configure the configuration server';
+exports.builder = yargs => {
+    yargs.options({
+        'gh-user': {
+            describe: 'The username that will be used when cloning iTrust from Github',
+            type: 'string',
+            alias: 'user'
+        },
+        'gh-pass': {
+            describe: 'The password that will be used when cloning iTrust from Github',
+            type: 'string',
+            alias: 'pass'
+        }
+    });
+};
 
 exports.handler = async argv => {
 
