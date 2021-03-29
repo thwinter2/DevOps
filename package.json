@@ -8,6 +8,7 @@
   "author": "YOU",
   "license": "ISC",
   "dependencies": {
+    "random-js": "^2.1.0",
     "chalk": "^4.1.0",
     "jenkins": "^0.28.1",
     "yargs": "^15.4.1"

@@ -1,42 +1,22 @@
 # Checkpoint
 
-## Automatically configure a Jenkins server (anmcgill)
+## Automatically configure a build environment and build job for iTrust (thwinter)
 
-For this part of the assignment, we've defined a role in ansible for installing and configuring Jenkins. When running "pipeline setup," we're using ansible to install Jenkins and its dependencies, configure Jenkins to run on port 9000, disable the setup wizard for Jenkins, and install build-pipeline-plugin to support creating pipeline-style jobs.
+## Implement a test suite analysis for detecting useful tests (anmcgill)
 
-The implementation in ansible attempts to follow the Jenkins documentation for installing from the command line on Debian/Ubuntu Linux distributions: https://www.jenkins.io/doc/book/installing/linux/#debianubuntu
+I've completed the Test Suite Analysis and Fuzzing workshops in preparation for working on this part of the project. 
 
-We were able to verify that, after running "pipeline setup," we could access Jenkins from the UI as the admin user and see that the build pipeline plugin was installed:
+Based on the code provided in the Fuzzing workshop, we've begun to put together an initial implementation of an automated code fuzzer. In addition to the required mutations, we've selected these two additional mutations:
 
-![Jenkins Installed](screenshots/jenkinsInstalled.PNG)
+1. Replace instances of && with ||
+2. Remove any instances of ! when the operator is used to negate a condition. For example, '!someVar' would be replaced with 'someVar'.
 
-We still need to update the setup command to handle the .vault-pass file.
+We've created an initial implementation of the useful-tests command. The command clones the iTrust repo with the given credentials and launches a driver.js script on the VM. The driver.js script currently just recursively reads from the cloned iTrust repo to generate a list of Java files and calls the mutation function on random files for the given number of iterations. The mutated file content is currently just being printed to the console to help with testing, but we aren't running anything through Maven yet.
 
-In addition, we should probably revisit the implementation in ansible. What we have seems to work, but we may find there are issues with it as we make more progress on the other two sections of the milestone and begin interacting with the Jenkins server. We'll also want to make sure that we aren't violating any best practices in ansible or incorrectly integrating with the provided cm-template project.
+The mutation function currently determines the number of lines that would constitute 10% of the source file, randomly selects a number of lines between one and that 10% threshold, and then attempts to apply mutations until we've modified enough lines to reach our randomly-selected number of lines or run out of mutations to apply. It then returns the modified string.
 
-One area for improvement is that the jenkins role in ansible will restart Jenkins twice every time it's run, even if nothing has changed. It's probably worthwhile to look into whether this can be avoided, maybe through the use of [handlers](https://docs.ansible.com/ansible/latest/user_guide/playbooks_handlers.html) in ansible.
+The remaining work is to clean up the mutation function logic and address any errors in it, re-evalute the driver code (is executing a script via Node on the VM the right way to go about this?), and implement logic to handle the test analysis part of this task, which will include running the tests via Maven, handling mutations that would prevent compilation, and resetting test cases between runs.
 
-## Automatically configure a build environment for checkbox.io (thwinter)
+Once all of that is done, we'll need to run the analysis for 1,000 iterations and document our results.
 
-A configuration server has been created that will be used to configure the environment of the Jenkin build server. 
-
-![config-server](screenshots/config-server.png)
-
-The Web IP address has been defined in the inventory file.
-
-The Ansible Playbook to automatically configure the environment has been started, and right now includes the tasks to download Node, download MongoDB, and declaring all of the necessary environment variables.
-
-I need to look into figuring out how to automatically create a MongoDB user/password using an Ansible playbook, so right now those respective environment variables are empty. Once I include that task, the config server and the build server can be linked and tested.
-
-## Create a build job for Jenkins (sawalter)
-
-We have the script written to configure the build job.  Still need to figure out how to make the authentication work automatically.  The screenshot below shows JJB creating the job and the resulting build in Jenkins.  The build currently fails because we have not yet installed all of the prerequisite services.
-
-![Creating Build Job with JJB](screenshots/buildjob.png)
-
-
-
-
-
-
-Once these three parts of the setup command are completed, we'll also need to implement the build command that will invoke our Jenkins job and print its log.
+## Implement a static analysis for checkbox.io (sawalter)
