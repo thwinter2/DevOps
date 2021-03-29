@@ -11,6 +11,9 @@
               sh 'npm install --prefix ./server-side/site'
               sh 'pm2 start ./server-side/site/server.js --name checkboxio'
           }
+          stage('Static Analysis') {
+              
+          }
           stage('Test') {
               sh 'cd ./server-side/site/ ; npm test'
           }
