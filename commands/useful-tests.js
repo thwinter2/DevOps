@@ -33,8 +33,7 @@ exports.handler = async argv => {
 
 };
 
-function run(iterations, user, pass)
-{    
+function run(iterations, user, pass) {    
     console.log(chalk.green(`Performing mutation testing with ${iterations} iterations...`));
 
     // Clone the repo for iTrust
