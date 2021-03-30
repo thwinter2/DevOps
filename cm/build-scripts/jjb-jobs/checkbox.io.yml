@@ -12,7 +12,7 @@
               sh 'pm2 start ./server-side/site/server.js --name checkboxio'
           }
           stage('Static Analysis') {
-              sh 'node /bakerx/lib/analysis.js ./server-side/site/server.js'
+              sh 'find ./server-side/ -path ./server-side/site/node_modules -prune -false -o -name "*.js" -exec node /bakerx/lib/analysis.js {} \;'
           }
           stage('Test') {
               sh 'cd ./server-side/site/ ; npm test'
