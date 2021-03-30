@@ -28,13 +28,15 @@ exports.handler = async argv => {
 
     (async () => {
 
-        await run();
+        const {user,pass} = argv;
+        
+        await run(user, pass);
 
     })();
 
 };
 
-async function run() {
+async function run(user, pass) {
 
     console.log(chalk.greenBright('Installing configuration server!'));
 
@@ -69,4 +71,7 @@ async function run() {
     result = sshSync(`/bakerx/cm/build-scripts/checkbox.io.sh checkbox.io`, 'vagrant@192.168.33.20');
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
     
+    // Clone the repo for iTrust
+    console.log(chalk.blueBright(`Cloning iTrust repository from GitHub.`));
+    sshSync(`git clone https://${user}:${pass}@github.ncsu.edu/engr-csc326-staff/iTrust2-v8`, 'vagrant@192.168.33.20');
 }

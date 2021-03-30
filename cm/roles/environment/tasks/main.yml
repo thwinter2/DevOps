@@ -58,3 +58,22 @@
     - { key: 'MONGO_USER="mongo"' }
     - { key: 'MONGO_PASSWORD="{{ vault_db_mongo_password }}"'}
     - { key: 'MONGO_IP="localhost"' }
+
+- name: Add Java Repository
+  apt_repository:
+    repo: 'ppa:openjdk-r/ppa'
+    state: present
+
+- name: Install Java
+  become: yes
+  apt:
+    pkg: openjdk-8-jdk
+    state: present
+    update_cache: yes
+
+- name: Install Maven
+  become: yes
+  apt:
+    pkg: maven
+    state: latest
+    update_cache: yes
