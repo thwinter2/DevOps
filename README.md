@@ -74,7 +74,7 @@ What are some reasons why 100% test coverage (i.e. statement coverage), might be
 
 ## Coverage Calculation
 
-
+There are 3 branches at the top level with if(c && b), else if(a), and else. Within the if(a) branch, there is a if(b) branch that splits into 2 more branches called if(b) and else. Within the if(b) branch, there is another split into 2 more branches called if(c) and else. Within the if(c) branch, there is another split into 2 more branches called console.log and else. All 7 of these branches merge and then we face another branch for the condition if(a||b||c), which splits into 2 branches of returning 0 if true and returning 1 for the else. In total there are 9 branches. The first test case covers 2 of these branches and the second test case covers a separate 2 branches. **In total the branch coverage is 4/9.**
 
 ## Workshops
 
@@ -83,5 +83,7 @@ What are some reasons why 100% test coverage (i.e. statement coverage), might be
 ![img](CoverageWorkshop.png)
 
 ### Fuzzing Workshop
+
+[Mutate Script](./mutate.js)
 
 ![img](FuzzingWorkshop.png)
