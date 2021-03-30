@@ -1,12 +1,18 @@
 # HW4
 
-## Class discussion (18)
+## Class discussion
 
-Describe your discussion for testing.
+I was in the nyc3 discussion on 3/9/21.
+
+![img](HW4_Discussion.png)
 
 What are some tradeoffs in having lots of unit tests and/or UI/integration tests in a CI pipeline?
 
+**We talked about how having lots of unit tests in a CI pipeline may add tons of build time over the course of many builds. While code coverage should increase with the more unit tests you have, it will add to the build time overall.**
+
 What are some reasons why 100% test coverage (i.e. statement coverage), might be difficult, impossible, impractical, or even counter-productive to achieve in practice.
+
+**100% test coverage can be counter-productive, say, if you have a switch statement doing generally the same function but for different variables depending on the switch variable. If there are tens/hundreds of cases, you'll spend so much time writing tests to cover every test when those tests generally are testing the same thing. You'll spend a lot of time just repeating what another unit test is accomplishing for a different case in the switch statement.**
 
 ## Conceptual Questions
 
@@ -65,3 +71,9 @@ What are some reasons why 100% test coverage (i.e. statement coverage), might be
 * How might advanced analysis techniques such as statistical analysis or automated program repair impact the design and usage of an automated software pipeline?
 
     ****
+
+## Coverage Calculation
+
+
+
+## Workshops
