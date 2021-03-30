@@ -77,3 +77,11 @@ What are some reasons why 100% test coverage (i.e. statement coverage), might be
 
 
 ## Workshops
+
+### Coverage Workshop
+
+![img](CoverageWorkshop.png)
+
+### Fuzzing Workshop
+
+![img](FuzzingWorkshop.png)
