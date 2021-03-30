@@ -2,6 +2,16 @@
 
 ## Automatically configure a build environment and build job for iTrust (thwinter)
 
+I have extended the [setup.js](setup.js) file to include the GitHub credential arguments needed to access the iTrust repository in the NCSU GitHub.
+
+I have added a task in the Ansible environment role to install Java and Maven. This will be needed for iTrust and the testing that follows in the test suite analysis and static analysis. I believe there are more packages that need to be installed to complete the necessary environment, but I am still looking into which packages and the correct way to install them using Ansible.
+
+I have started the Build Job script for iTrust, but right now it only includes the GitHub repository URL. I need to do more research into what all is required for the environment in order to fully run iTrust. I am using jenkins-job-builder to accomplish this pipeline job build.
+
+I know that I need to setup an Admin User for iTrust. I have also had trouble using my credentials to clone the iTrust repository. I have used my personal NCSU credentials like I usually would for GitHub, but they are rejected every time. I need to investigate this further.
+
+I also need to complete the Clean Up section of the Build Job.
+
 ## Implement a test suite analysis for detecting useful tests (anmcgill)
 
 I've completed the Test Suite Analysis and Fuzzing workshops in preparation for working on this part of the project. 
