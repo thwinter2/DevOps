@@ -8,9 +8,10 @@
   "author": "YOU",
   "license": "ISC",
   "dependencies": {
-    "random-js": "^2.1.0",
     "chalk": "^4.1.0",
+    "esprima": "^4.0.1",
     "jenkins": "^0.28.1",
+    "random-js": "^2.1.0",
     "yargs": "^15.4.1"
   }
 }

@@ -10,8 +10,12 @@
     state=started
     enabled=yes
 
-- name: Install npm pm2 plugin
+- name: Install npm pm2 package
   npm:
     name: pm2
     global: yes
 
+- name: Install npm esprima package
+  npm:
+    name: esprima
+    global: yes

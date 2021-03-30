@@ -20,3 +20,8 @@ The remaining work is to clean up the mutation function logic and address any er
 Once all of that is done, we'll need to run the analysis for 1,000 iterations and document our results.
 
 ## Implement a static analysis for checkbox.io (sawalter)
+
+I have completed the Test Suite Analysis and Static Analysis/Complexity workshops in preparation for working on this part of the project.
+
+We created the Static Analysis stage in the checkbox.io build job.  We then added a shell command to that stage to search for all .js files in the server-side directory and subdirectories of the checkbox.io Jenkins job and execute the static analysis script on each of these files.  We created the static analysis script, analysis.js, based on the code provided in the static analysis workshop.  The pipeline build command now automatically runs the static analysis stage as currently defined before running the test stage.
+ We still need to implement the specific static analysis tests specified in the requirements, report all violations discovered in the build log, and fail the build when any of them are violated.
