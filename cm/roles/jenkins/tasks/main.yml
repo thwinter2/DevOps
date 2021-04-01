@@ -1,10 +1,4 @@
 --- # Based on Jenkins documentation: https://www.jenkins.io/doc/book/installing/linux/#debianubuntu
-- name: Make sure open jdk is installed
-  apt:
-    name: openjdk-11-jdk
-    state: latest
-    install_recommends: no
-
 - name: Add jenkins repository key
   apt_key:
     url: https://pkg.jenkins.io/debian-stable/jenkins.io.key
@@ -64,17 +58,17 @@
 
 - name: Install Jenkins plugins
   jenkins_plugin:
-    name: '{{ item.key }}'
+    name: '{{ item }}'
     url: http://192.168.33.20:9000/
     url_username: admin
     url_password: '{{ vault_jenkins_admin_password }}'
     timeout: 120
   notify: Restart Jenkins
   with_items:
-    - { key: 'workflow-aggregator' }
-    - { key: 'git' }
-    - { key: 'ws-cleanup' }
-    - { key: 'pipeline-stage-view' }
+    - 'workflow-aggregator'
+    - 'git'
+    - 'ws-cleanup'
+    - 'pipeline-stage-view'
 
 # Trigger restart after installing plugins
 - name: Flush handlers to trigger Jenkins restart
