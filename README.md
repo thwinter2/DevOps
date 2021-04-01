@@ -58,19 +58,19 @@ What are some reasons why 100% test coverage (i.e. statement coverage), might be
 
 * Why regex isn't enough for performing static analysis?
 
-    ****
+    **Using regex for static analysis typically leads to a lot of false postives and a lot of false negatives. In the workshop example, the regex caused the build to fail as it found a string of consecutive periods, which the regex thought was a long chain of message calls. It also failed to miss a legitimate long message chain simply because the messages were separated by new lines.**
 
 * When implementing a code smell detector, how might you detect duplicated code?
 
-    ****
+    **I would run static analysis to look at the ATS for similar/exact branches of the tree. If a there is a branch that is found to have a similar depth with similar properties/types, then it is likely there is duplicated code.**
 
 * Why is an visitor pattern using technique for writing static analysis based code checks?
 
-    ****
+    **Because it checks every node of the abstract syntax tree of the script. We can set the function to only visit nodes of the tree that are of interest to us, so we can quickly and accurately determine if, say, and message chain is too long in a script.**
 
 * How might advanced analysis techniques such as statistical analysis or automated program repair impact the design and usage of an automated software pipeline?
 
-    ****
+    **These tools should bolster the automated pipeline and decrease the amount of manual work needed to fix errors. Static analysis allows us to automate checks for potential build failures. Since the static analysis should be run the exact same every time, it will increase the reliability of the automated pipeline. Automated program repair can potentially fix build failures without a human having to manually do it themselves, which saves time for the build because it doesn't have to wait in a queue for the human to get to it in order to debug/fix the failure.**
 
 ## Coverage Calculation
 
@@ -87,3 +87,9 @@ There are 3 branches at the top level with if(c && b), else if(a), and else. Wit
 [Mutate Script](./mutate.js)
 
 ![img](FuzzingWorkshop.png)
+
+## Static Analysis Workshop
+
+[Analysis Script](./analysis.js)
+
+![img](StaticAnalysisWorkshop.png)
