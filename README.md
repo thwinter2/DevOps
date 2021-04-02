@@ -46,7 +46,7 @@ What are some reasons why 100% test coverage (i.e. statement coverage), might be
 
 * What's the highest level of flakyness a test can achieve and why? Hint: Think what behavior are purely random decision would be?
 
-    ****
+    **The highest level would be 50%, which means that a test has the same random chance to pass as it does to fail.**
 
 * What is the difference between generative and mutation-based fuzzing techniques?
 
@@ -54,7 +54,7 @@ What are some reasons why 100% test coverage (i.e. statement coverage), might be
 
 * Why might minification of fuzzing inputs be useful for debugging an fault?
 
-    ****
+    **Because fuzzing creates inputs that are hard for humans to read, so when the human needs to debug an actual fault, it can be hard for them to parse through the code to figure out the logic if random fuzzing inputs are scattered throughout the code.**
 
 * Why regex isn't enough for performing static analysis?
 
