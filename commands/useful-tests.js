@@ -1,5 +1,6 @@
 const chalk = require('chalk');
 const sshSync = require('../lib/ssh');
+const scpSync = require('../lib/scp');
 
 exports.command = 'useful-tests';
 exports.desc = 'Perform mutation testing to identify useful tests';
@@ -39,6 +40,9 @@ function run(iterations, user, pass) {
     // Clone the repo for iTrust
     console.log(chalk.blueBright(`Cloning iTrust repository from GitHub.`));
     sshSync(`git clone https://${user}:${pass}@github.ncsu.edu/engr-csc326-staff/iTrust2-v8`, 'vagrant@192.168.33.20');
+
+    // Copy over the application.yml file to configure the tests
+    scpSync('application.yml', 'vagrant@192.168.33.20:/home/vagrant/iTrust2-v8/iTrust2/src/main/resources/application.yml')
 
     // Run script to perform mutation testing
     console.log(chalk.blueBright(`Running ${iterations} rounds of mutation testing...`));
