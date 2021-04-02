@@ -34,15 +34,15 @@ What are some reasons why 100% test coverage (i.e. statement coverage), might be
 
 * What is the primary limitation of mutation coverage?
 
-    ****
+    **Because there can be so many ways to create a unique mutant of a piece of code, it can be difficult to calculate the mutation coverage percentage of the piece of code. It can also be hard to determine if all of the possible ways to mutate the code will be caught using mutation testing.**
 
 * How can an acceptance test be automated while still allowing human review?
 
-    ****
+    **We can do screenshot testing (filming) of the automated acceptance test being run. Then the human can watch the videos/pictures when the test suite has been completed. Riot Games uses this to make sure their updates don't create major imbalances in their games; they take videos of their acceptance tests being run and watch them just to check to make sure something else doesn't break that the test isn't checking for.**
 
 * Why might the failure rate of a test be useful to know when analyzing a test suite?
 
-    ****
+    **Because it can point us in the direction in determing what may be causing the failure. If the test rarely failing, then there might be some edge case we have not considered that is causing the test to fail. If the test is constantly failing, then there is probably something wrong with the basic logic or structure of the code.**
 
 * What's the highest level of flakyness a test can achieve and why? Hint: Think what behavior are purely random decision would be?
 
@@ -70,7 +70,7 @@ What are some reasons why 100% test coverage (i.e. statement coverage), might be
 
 * How might advanced analysis techniques such as statistical analysis or automated program repair impact the design and usage of an automated software pipeline?
 
-    **These tools should bolster the automated pipeline and decrease the amount of manual work needed to fix errors. Static analysis allows us to automate checks for potential build failures. Since the static analysis should be run the exact same every time, it will increase the reliability of the automated pipeline. Automated program repair can potentially fix build failures without a human having to manually do it themselves, which saves time for the build because it doesn't have to wait in a queue for the human to get to it in order to debug/fix the failure.**
+    **These tools should bolster the automated pipeline and decrease the amount of manual work needed to fix errors. Statisitcal analysis allows us to determine the liklihood for potential build failures given the pass/fail statistics of previous builds. Since we have data/statistics of the build it will better our expectation of a successful build. Automated program repair can potentially fix build failures without a human having to manually do it themselves, which saves time for the build because it doesn't have to wait in a queue for the human to get to it in order to debug/fix the failure.**
 
 ## Coverage Calculation
 
