@@ -58,6 +58,7 @@
     - MONGO_USER="mongo"
     - MONGO_PASSWORD="{{ vault_db_mongo_password }}"
     - MONGO_IP="localhost"
+    - MYSQL_PASSWORD="{{ vault_db_mysql_root_password }}"
 
 - name: Add Java Repository
   apt_repository:
@@ -66,7 +67,7 @@
 
 - name: Install Java
   apt:
-    pkg: openjdk-8-jdk
+    pkg: openjdk-11-jdk
     state: present
     update_cache: yes
 
