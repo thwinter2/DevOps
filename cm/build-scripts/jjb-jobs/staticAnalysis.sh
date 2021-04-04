@@ -11,7 +11,7 @@ do
     fi
 
     node /bakerx/lib/analysis.js "${filename}"
-    if [ $(echo $?) ] ; then
+    if [ $(echo $?) != 0 ] ; then
         let FAILS+=1;
     fi
     
