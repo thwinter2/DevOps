@@ -49,6 +49,6 @@ function run(iterations, user, pass) {
     sshSync(`node /bakerx/lib/driver.js ${iterations}`, 'vagrant@192.168.33.20');
 
     // Remove repo after tests are completed
-    console.log(chalk.blueBright(`Removing iTrust repo...`));
+    console.log(chalk.blueBright(`\nRemoving iTrust repo...`));
     sshSync('rm -f -r /home/vagrant/iTrust2-v8', 'vagrant@192.168.33.20');
 }
