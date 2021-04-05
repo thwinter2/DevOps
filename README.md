@@ -43,6 +43,8 @@ We were asked to select two mutations in addition to those listed in the assignm
 
 We initially had a different second mutation, but we found that we were hitting a lot of files where we couldn't mutate anything. The return statements mutation could be applied to most files, which is one of the reasons we decided to use it.
 
+As the mutations are generated, they're written out to a /home/vagrant/mutations directory on the VM. The files within this directory are referenced from the test report.
+
 The full output from running with 1,000 iterations is [here](usefulTests.txt). If you want to just see the report itself without all that debug output, that's also available in a [separate file](usefulTestsReport.txt).
 
 The test suite found about 60% of the mutations, and the testDiagnoses test case within the APIDiagnosisTest class was the most effective at catching mutations:
