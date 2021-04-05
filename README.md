@@ -25,7 +25,7 @@ TODO
 
 ### Implement a test suite analysis for detecting useful tests (anmcgill)
 
-For this task, we defined a [driver.js](lib/driver.js) script that is run on the VM. This script uses a [mutate.js](libs/mutate.js) file to generate mutations.
+For this task, we defined a [driver.js](lib/driver.js) script that is run on the VM. This script uses a [mutate.js](lib/mutate.js) file to generate mutations.
 
 The useful-tests command we defined first clones the iTrust repo and copies an application.yml file into the cloned project to configure the tests. The application.yml file uses a MYSQL_PASSWORD environment variable that is defined in our "environment" ansible role when MySQL is initially installed and configured. The command then calls the driver.js script, passing in the specified number of iterations.
 
