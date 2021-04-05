@@ -70,8 +70,21 @@ async function run(user, pass) {
     console.log(chalk.blueBright(`Creating Jenkins Job for checkbox.io...`));
     result = sshSync(`/bakerx/cm/build-scripts/checkbox.io.sh checkbox.io`, 'vagrant@192.168.33.20');
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
-    
+
+    console.log(chalk.greenBright(`Building iTrust job with JJB!`));
+
+    console.log(chalk.blueBright(`Creating Jenkins Job for iTrust...`));
+    result = sshSync(`/bakerx/cm/build-scripts/iTrust.sh iTrust`, 'vagrant@192.168.33.20');
+    if( result.error ) { console.log(result.error); process.exit( result.status ); }
+
+    // Remove repo
+    console.log(chalk.blueBright(`\nRemoving iTrust repo...`));
+    sshSync('rm -f -r /home/vagrant/iTrust2-v8', 'vagrant@192.168.33.20');
+
     // Clone the repo for iTrust
     console.log(chalk.blueBright(`Cloning iTrust repository from GitHub.`));
     sshSync(`git clone https://${user}:${pass}@github.ncsu.edu/engr-csc326-staff/iTrust2-v8`, 'vagrant@192.168.33.20');
+
+    // Copy over the application.yml file to configure the tests
+    scpSync('application.yml', 'vagrant@192.168.33.20:/home/vagrant/iTrust2-v8/iTrust2/src/main/resources/application.yml')
 }

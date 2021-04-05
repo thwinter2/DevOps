@@ -1,0 +1,20 @@
+- job:
+    name: iTrust
+    project-type: pipeline
+    dsl: |
+      node {
+          stage('Source') {
+              cleanWs()
+              dir("/home/vagrant/"){
+                sh 'pwd'
+              }
+          }
+          stage('Build') {
+              sh 'ls'           
+              'sh sudo cp /bakerx/application.yml /home/vagrant/iTrust2-v8/iTrust2/src/main/resources/application.yml'
+              'sh mvn clean test integration-test checkstyle:checkstyle'
+          }
+          stage('Clean') {
+            cleanWs()
+          }
+      }
