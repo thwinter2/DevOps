@@ -111,3 +111,8 @@
     mode: 0600
   notify:
   - Restart MySQL
+
+- name: Install jq to be used in building Jenkins credentials request
+  apt:
+    pkg: jq
+    state: present
