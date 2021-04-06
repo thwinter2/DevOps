@@ -68,8 +68,9 @@ async function run(user, pass) {
     console.log(chalk.greenBright(`Building checkbox.io job with JJB!`));
 
     console.log(chalk.blueBright(`Creating Jenkins Job for checkbox.io...`));
-    result = sshSync(`/bakerx/cm/build-scripts/checkbox.io.sh checkbox.io`, 'vagrant@192.168.33.20');
+    result = sshSync(`/bakerx/cm/build-scripts/create_job.sh checkbox.io`, 'vagrant@192.168.33.20');
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
+<<<<<<< HEAD
 
     console.log(chalk.greenBright(`Building iTrust job with JJB!`));
 
@@ -87,4 +88,12 @@ async function run(user, pass) {
 
     // Copy over the application.yml file to configure the tests
     scpSync('application.yml', 'vagrant@192.168.33.20:/home/vagrant/iTrust2-v8/iTrust2/src/main/resources/application.yml')
+=======
+    
+    console.log(chalk.greenBright(`Building iTrust job with JJB!`));
+
+    console.log(chalk.blueBright(`Creating Jenkins Job for iTrust...`));
+    result = sshSync(`/bakerx/cm/build-scripts/create_job.sh iTrust2 ${user} ${pass}`, 'vagrant@192.168.33.20');
+    if( result.error ) { console.log(result.error); process.exit( result.status ); }
+>>>>>>> master
 }

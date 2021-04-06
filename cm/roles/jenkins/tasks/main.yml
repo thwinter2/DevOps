@@ -69,6 +69,8 @@
     - 'git'
     - 'ws-cleanup'
     - 'pipeline-stage-view'
+    - 'warnings-ng'
+    - 'jacoco'
 
 # Trigger restart after installing plugins
 - name: Flush handlers to trigger Jenkins restart
