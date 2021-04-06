@@ -3,15 +3,20 @@
     project-type: pipeline
     dsl: |
       node {
+        try {
           stage('Source') {
-              cleanWs()
-              git 'https://github.ncsu.edu/engr-csc326-staff/iTrust2-v8'
+            git url: 'https://github.ncsu.edu/engr-csc326-staff/iTrust2-v8', credentialsId: 'gh-password', branch: 'main'
           }
           stage('Build') {
-            
-          
+              sh 'ls'
+          }
+          stage('Static Analysis') {
           }
           stage('Test') {
-#            sh 'cd ./server-side/site/ ; npm test'
           }
+        } catch(e) {
+          throw e
+        } finally {
+            cleanWs()
+        }
       }
