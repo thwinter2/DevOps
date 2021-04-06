@@ -10,8 +10,11 @@
               sh 'cp /bakerx/application.yml iTrust2/src/main/resources/application.yml'
               sh 'cd iTrust2; mvn clean test integration-test checkstyle:checkstyle'
           }
-          stage('Clean') {
-            cleanWs()
+          stage('Static Analysis') {
+            
+          }
+          stage('Clean'){
+              cleanWs()
           }
       }
 

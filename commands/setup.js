@@ -74,6 +74,6 @@ async function run(user, pass) {
     console.log(chalk.greenBright(`Building iTrust job with JJB!`));
 
     console.log(chalk.blueBright(`Creating Jenkins Job for iTrust...`));
-    result = sshSync(`/bakerx/cm/build-scripts/create_job.sh iTrust2 ${user} ${pass}`, 'vagrant@192.168.33.20');
+    result = sshSync(`/bakerx/cm/build-scripts/create_job.sh iTrust ${user} ${pass}`, 'vagrant@192.168.33.20');
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
 }
