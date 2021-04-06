@@ -86,6 +86,11 @@ async function startBuild(buildName)
 // END CODE FROM JENKINS WORKSHOP
 
 async function run(u, p, name) {
+    console.log(chalk.greenBright(`Building iTrust job with JJB!`));
+
+    console.log(chalk.blueBright(`Creating Jenkins Job for iTrust...`));
+    result = sshSync(`/bakerx/cm/build-scripts/iTrust.sh iTrust`, 'vagrant@192.168.33.20');
+    if( result.error ) { console.log(result.error); process.exit( result.status ); }
     
     if( name == null ) { console.log("You must specify a build name Run \"pipeline build --help\" for more information."); process.exit( 1 ); }
     jenkins = require('jenkins')({ baseUrl: `http://${u}:${p}@192.168.33.20:9000`, crumbIssuer: true, promisify: true });
