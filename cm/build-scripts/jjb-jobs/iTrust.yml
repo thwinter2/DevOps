@@ -14,6 +14,7 @@
             
           }
           stage('Clean'){
+              sh 'kill /sbin/lsof -i -n -P | grep TCP | grep 9001 | tr -s " " "\n" | sed -n 2p || true'
               cleanWs()
           }
       }
