@@ -6,15 +6,22 @@
           stage('Source') {
               git url: 'https://github.ncsu.edu/engr-csc326-staff/iTrust2-v8', credentialsId: 'gh-password', branch: 'main'
           }
-          stage('Build') {          
-              sh 'cp /bakerx/application.yml iTrust2/src/main/resources/application.yml'
-              sh 'cd iTrust2; mvn clean test integration-test checkstyle:checkstyle'
+          try{
+            stage('Build') {          
+                sh 'cp /bakerx/application.yml iTrust2/src/main/resources/application.yml'
+                sh 'cd iTrust2; mvn clean test integration-test checkstyle:checkstyle'
+            }
+            stage('Static Analysis') {
+                
+            }
+          } catch (e){
+            ;
           }
-          stage('Static Analysis') {
-            
-          }
-          stage('Clean'){
-              cleanWs()
+          finally{
+            sh "mysql -u root -p$MYSQL_PASSWORD -e 'DROP DATABASE IF EXISTS iTrust2_test'"
+            sh 'pgrep chrome | xargs kill -9'
+            sh 'kill /sbin/lsof -i -n -P | grep TCP | grep 9001 | tr -s " " "\n" | sed -n 2p || true'
+            cleanWs()
           }
       }
 
