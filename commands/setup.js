@@ -41,7 +41,7 @@ async function run(user, pass) {
     console.log(chalk.greenBright('Installing configuration server!'));
 
     console.log(chalk.blueBright('Provisioning configuration server...'));
-    let result = child.spawnSync(`bakerx`, `run config-srv focal --memory 2048 --ip 192.168.33.20 --sync`.split(' '), {shell:true, stdio: 'inherit'} );
+    let result = child.spawnSync(`bakerx`, `run config-srv focal --memory 4096 --ip 192.168.33.20 --sync`.split(' '), {shell:true, stdio: 'inherit'} );
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
     console.log(chalk.blueBright('Running init script...'));
