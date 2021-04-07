@@ -59,3 +59,18 @@ Useful tests
 ```
 
 ### Implement a static analysis for checkbox.io (sawalter)
+
+For this task, we created a script, [analysis.js](/lib/analysis.js), based on the workshop code to run static analysis on the checkbox.io Jenkins job.  These tests include checking for long methods (greater than 100 lines of code), long message chains (more than 10 chained . commands after the initial reference), and excessive nesting depth (more than 5 deep).  his script is executed on every .js file in the checkbox.io repository, excluding those contained in the node_modules directory.  
+
+Originally, we executed a shell command in the jenkins job script using find... exec to execute the script on these files.  Per the requirements, we need to fail the Jenkins build job when any of these conditions are violated.  To accomplish this, we decided to set a non-zero exit code of 1 any time one of these violation are detected.  We could then add up the exit code values from the analysis on each file, ultimately obtaining a calculation of the number of files containing violations, and if this number was greater than 1, could fail the build.  A limitation of using find... exec, however, was that the individual exit codes from each run of the analysis.js script were not retained.  In order to retain the exit codes, we instead decided to use a bash script, [staticAnalysis.sh](/cm/build-scripts/jjb-jobs/staticAnalysis.sh), implementing a for loop to cycle through each .js file, and storing the exit code after each run.  We then have the script return an exit code equal to the sum of the failures.  This script is run using the shell command in the Jenkins job.  Any time Jenkins receives a non-zero exit code, the build is automatically failed and immediately terminates.  
+
+In order to continue Jenkins running the 'Test' stage even after a failure in the Static Analysis stage, we used the newly implemented catchError() command in Jenkins, which allowed us to specify that we wanted to fail the Static Analysis stage as well as failing the build, while not immediately terminating the build, allowing the later stages to run.  The screenshot below shows the final state of the build, with the Source, Build, and Test stages passing in green, and the Static Analysis stage failing in red.  The red ball indicates that the entire build failed as a result of the failing stage.
+
+
+![Jenkins Build State](/screenshots/StaticAnalysis.png)
+
+
+The Jenkins build log is also shown below, depicting both methods that passed the static analysis tests, as well as the errors for the three different types of failures.
+
+
+![Build Failure Log](/screenshots/StaticAnalysis2.png)
