@@ -50,11 +50,69 @@
 - name: Define Environment variables
   lineinfile:
     path: /etc/environment
-    line: '{{ item.key }}'
+    line: '{{ item }}'
     state: present
   with_items:
-    - { key: 'APP_PORT=3002' }
-    - { key: 'MONGO_PORT=27017' }
-    - { key: 'MONGO_USER="mongo"' }
-    - { key: 'MONGO_PASSWORD="{{ vault_db_mongo_password }}"'}
-    - { key: 'MONGO_IP="localhost"' }
+    - APP_PORT=3002
+    - MONGO_PORT=27017
+    - MONGO_USER="mongo"
+    - MONGO_PASSWORD="{{ vault_db_mongo_password }}"
+    - MONGO_IP="localhost"
+    - MYSQL_PASSWORD="{{ vault_db_mysql_root_password }}"
+
+- name: Add Java Repository
+  apt_repository:
+    repo: 'ppa:openjdk-r/ppa'
+    state: present
+
+- name: Install Java
+  apt:
+    pkg: openjdk-11-jdk
+    state: present
+    update_cache: yes
+
+- name: Install Maven
+  apt:
+    pkg: maven
+    state: latest
+    update_cache: yes
+
+- name: Install MySQL and related packages
+  apt: 
+    name: ['mysql-server', 'mysql-client']
+    state: present
+
+- name: Install PyMySQL
+  pip:
+    name: pymysql
+    state: present
+
+- name: Start MySQL service
+  service: 
+    name: mysql
+    state: started
+    enabled: true
+
+# See the notes here for an explanation of why this is necessary:
+# https://docs.ansible.com/ansible/latest/collections/community/mysql/mysql_user_module.html#notes
+- name: Set MySQL root Password
+  mysql_user:
+    name: root
+    password: "{{ vault_db_mysql_root_password }}"
+    check_implicit_admin: true
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+
+- name: Create .my.cnf file with root user credentials
+  template: 
+    src: /bakerx/my.cnf.j2
+    dest: /root/.my.cnf
+    owner: root
+    group: root
+    mode: 0600
+  notify:
+  - Restart MySQL
+
+- name: Install jq to be used in building Jenkins credentials request
+  apt:
+    pkg: jq
+    state: present

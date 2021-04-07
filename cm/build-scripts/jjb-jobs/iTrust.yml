@@ -1,0 +1,20 @@
+- job:
+    name: iTrust
+    project-type: pipeline
+    dsl: |
+      node {
+          stage('Source') {
+              git url: 'https://github.ncsu.edu/engr-csc326-staff/iTrust2-v8', credentialsId: 'gh-password', branch: 'main'
+          }
+          stage('Build') {          
+              sh 'cp /bakerx/application.yml iTrust2/src/main/resources/application.yml'
+              sh 'cd iTrust2; mvn clean test integration-test checkstyle:checkstyle'
+          }
+          stage('Static Analysis') {
+            
+          }
+          stage('Clean'){
+              cleanWs()
+          }
+      }
+

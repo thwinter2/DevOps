@@ -9,18 +9,34 @@ const sshSync = require('../lib/ssh');
 
 exports.command = 'setup';
 exports.desc = 'Provision and configure the configuration server';
+exports.builder = yargs => {
+    yargs.options({
+        'gh-user': {
+            describe: 'The username that will be used when cloning iTrust from Github',
+            type: 'string',
+            alias: 'user'
+        },
+        'gh-pass': {
+            describe: 'The password that will be used when cloning iTrust from Github',
+            type: 'string',
+            alias: 'pass'
+        }
+    });
+};
 
 exports.handler = async argv => {
 
     (async () => {
 
-        await run();
+        const {user,pass} = argv;
+        
+        await run(user, pass);
 
     })();
 
 };
 
-async function run() {
+async function run(user, pass) {
 
     console.log(chalk.greenBright('Installing configuration server!'));
 
@@ -52,7 +68,12 @@ async function run() {
     console.log(chalk.greenBright(`Building checkbox.io job with JJB!`));
 
     console.log(chalk.blueBright(`Creating Jenkins Job for checkbox.io...`));
-    result = sshSync(`/bakerx/cm/build-scripts/checkbox.io.sh checkbox.io`, 'vagrant@192.168.33.20');
+    result = sshSync(`/bakerx/cm/build-scripts/create_job.sh checkbox.io`, 'vagrant@192.168.33.20');
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
     
+    console.log(chalk.greenBright(`Building iTrust job with JJB!`));
+
+    console.log(chalk.blueBright(`Creating Jenkins Job for iTrust...`));
+    result = sshSync(`/bakerx/cm/build-scripts/create_job.sh iTrust ${user} ${pass}`, 'vagrant@192.168.33.20');
+    if( result.error ) { console.log(result.error); process.exit( result.status ); }
 }
