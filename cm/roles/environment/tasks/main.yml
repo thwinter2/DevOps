@@ -127,7 +127,5 @@
   command: sh 'wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -'
 
 - name: Install Chrome
-  apt: 
-    pkg: google-chrome-stable
-    state: latest
-    update_cache: yes
+  apt:
+    deb: https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
