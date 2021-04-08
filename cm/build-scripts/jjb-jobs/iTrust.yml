@@ -3,25 +3,52 @@
     project-type: pipeline
     dsl: |
       node {
-          stage('Source') {
-              git url: 'https://github.ncsu.edu/engr-csc326-staff/iTrust2-v8', credentialsId: 'gh-password', branch: 'main'
+        stage('Source') {
+          git url: 'https://github.ncsu.edu/engr-csc326-staff/iTrust2-v8', credentialsId: 'gh-password', branch: 'main'
+        }
+        try{
+          stage('Build') {          
+            sh 'cp /bakerx/application.yml iTrust2/src/main/resources/application.yml'
+            sh 'cd iTrust2; mvn clean test integration-test checkstyle:checkstyle'
           }
-          try{
-            stage('Build') {          
-                sh 'cp /bakerx/application.yml iTrust2/src/main/resources/application.yml'
-                sh 'cd iTrust2; mvn clean test integration-test checkstyle:checkstyle'
-            }
-          } catch (e){
+          stage('Code Coverage') {
+            jacoco( 
+              execPattern: '**/*.exec',
+              classPattern: '**/classes',
+              sourcePattern: '**/src/main/java',
+              exclusionPattern: '**/src/test*',
+              changeBuildStatus: true,
+              minimumLineCoverage: '60',
+              maximumLineCoverage: '100',
+              minimumInstructionCoverage: '60',
+              maximumInstructionCoverage: '100',
+              minimumMethodCoverage: '60',
+              maximumMethodCoverage: '100',
+              minimumBranchCoverage: '40',
+              maximumBranchCoverage: '100',
+              minimumClassCoverage: '90',
+              maximumClassCoverage: '100'
+            )
+          }
+          stage('Static Analysis') {
+            recordIssues(
+              enabledForFailure: true,
+              aggregatingResults: true,
+              tool: checkStyle(pattern: '**/checkstyle-result.xml'),
+              qualityGates: [[threshold: 100, type: 'TOTAL', unstable: true]]
+            )
+          }
+        } catch (e){
             throw e
           }
-          finally{
-            sh '''
-              set +x
-              mysql -u root -p$MYSQL_PASSWORD -e 'DROP DATABASE IF EXISTS iTrust2_test' 2>/dev/null
-              pkill chrome || true
-              fuser -k 9001/tcp || true
-            '''
-            cleanWs()
-          }
+        finally{
+          sh '''
+            set +x
+            mysql -u root -p$MYSQL_PASSWORD -e 'DROP DATABASE IF EXISTS iTrust2_test' 2>/dev/null
+            pkill chrome || true
+            fuser -k 9001/tcp || true
+          '''
+          cleanWs()
+        }
       }
 
