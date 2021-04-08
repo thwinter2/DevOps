@@ -18,10 +18,42 @@ TODO
 2. In the project directory, run `npm install`
 3. In the project directory, run `npm link`
 4. Create a file in the project directory named ".vault-pass".  Inside the file, store the password for the ansible vault.
-5. In the project directory, run the command `pipeline setup`.
-6. In the project directory, run the command `pipeline build checkbox.io`.  Optionally, you may specify a username and password for Jenkins with the command `pipeline build checkbox.io -u <jenkins-user-id> -p <jenkins-password>`
+5. In the project directory, run the command `pipeline setup --gh-user <Your GitHub Account Name> --gh-pass <GitHub API Key>`.
+6. In the project directory, run the command `pipeline build iTrust -u <jenkins-user-id> -p <jenkins-password>`
+7. In the project directory, run the command `pipeline useful-tests -c 1000 --gh-user <Your GitHub Account Name> --gh-pass <GitHub API Key>`
+8. In the project directory, run the command `pipeline build checkbox.io`.  Optionally, you may specify a username and password for Jenkins with the command `pipeline build checkbox.io -u <jenkins-user-id> -p <jenkins-password>`
 
 ### Automatically configure a build environment and build job for iTrust (thwinter)
+
+For this task, we needed to extend the [Setup command](commands/setup.js) to take in the user's GitHub account username and password as arguments. A GitHub developer API key is required to be used as the password argument because the is the best way get cloning access to the iTrust repository that will be used in the Jenkins Job Builder.
+
+The iTrust application requires Java, Maven, MySQL, and Chrome in order to be fully functional. These applications were added to the [Environment task](cm/roles/environment/tasks/main.yml) installation list so that they would be automatically installed when the `pipeline setup` command is used. We also needed to create a MySQL user with a password in order to run SQL commands. Additionally, we stored the GitHub credentials in the Jenkins credentials manager so that they would be stored during the setup process and could be used during the Jenkins Job Builder phase.
+
+In order to add the iTrust job to the JBB, we altered the now [create_job script](cm/build-scripts/create_job.sh) to create a job that depends on the name argument of the [Build command](commands/build.js). The name for argument needs to be one of the YAML files located in [cm/build_scripts/jjb-jobs](cm/build-scripts/jjb-jobs), and it will run the job in the respective YAML file for the given name argument.
+
+The [iTrust build job](cm/build-scripts/jjb-jobs/iTrust.yml) steps are then run when the user types in `pipeline build iTrust -u <user> -p <password>`: 
+
+1. The build job checks out the iTrust repository from the NCSU GitHub using the account username and API key given in the Setup command, but has since been store as the Jenkins credentials.
+2. The build job then copies the [application.yml](application.yml) information from the /bakerx/ location and into the iTrust application.yml file.
+3. The Maven tests, integration tests, and checkstyle tests are then run.
+4. The Code Coverge is then calculated using the added JaCoCo plugin for Jenkins. We utilized build gates to make sure the build fails if the code coverage is not a certain percentage.
+5. The Jenkins function recordIssues is then utilized to use the checkstyle test results. If there are any checkstyle errors, the build is gated so that it will fail.
+6. We then run some clean up steps regardless of whether the build succeeds or fails. We log into MySQL and drop the iTrust2_test database if it exists, then kill all Google Chrome processes, and then kill stray jetty processes on port 9001 using the fuser plugin.
+7. Finally, we run the general cleanWS() function to clean the Jenkins workspace.
+
+Passing Cucumber Tests:
+
+![img](screenshots/CucumberTests.png)
+
+JaCoCo and CheckStyle reports:
+
+![img](screenshots/JaCoCo-CheckStyleReport.png)
+
+We were able to successfully automatically configure the environment using Ansible and then automatically create a Jenkins build job to analyze and test the iTrust repository.
+
+An issue we ran into was that setting the maximum JaCoCo thresholds for build gating to higher than the code coverage actually caused an unstable build. It turns out that the maximum setting is kind of a misnomer for just a larger code coverage threshold than the minimum JaCoCo threshold.
+
+Another issue we ran into was the MBean server could not connect at port 9001. It turned out that because our VM's RAM was too low for that step to complete before the timeout countdown had been reached. We increased the RAM from 2GB to 4GB and the issue was resolved.
 
 ### Implement a test suite analysis for detecting useful tests (anmcgill)
 
