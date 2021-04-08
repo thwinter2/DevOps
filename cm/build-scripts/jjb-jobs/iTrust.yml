@@ -18,16 +18,16 @@
               sourcePattern: '**/src/main/java',
               exclusionPattern: '**/src/test*',
               changeBuildStatus: true,
-              minimumLineCoverage: '60',
-              maximumLineCoverage: '100',
-              minimumInstructionCoverage: '60',
-              maximumInstructionCoverage: '100',
-              minimumMethodCoverage: '60',
-              maximumMethodCoverage: '100',
-              minimumBranchCoverage: '40',
-              maximumBranchCoverage: '100',
-              minimumClassCoverage: '90',
-              maximumClassCoverage: '100'
+              minimumLineCoverage: '50',
+              maximumLineCoverage: '60',
+              minimumInstructionCoverage: '50',
+              maximumInstructionCoverage: '60',
+              minimumMethodCoverage: '50',
+              maximumMethodCoverage: '60',
+              minimumBranchCoverage: '30',
+              maximumBranchCoverage: '40',
+              minimumClassCoverage: '80',
+              maximumClassCoverage: '90'
             )
           }
           stage('Static Analysis') {
@@ -35,7 +35,7 @@
               enabledForFailure: true,
               aggregatingResults: true,
               tool: checkStyle(pattern: '**/checkstyle-result.xml'),
-              qualityGates: [[threshold: 100, type: 'TOTAL', unstable: true]]
+              qualityGates: [[threshold: 1, type: 'TOTAL', unstable: true]]
             )
           }
         } catch (e){
