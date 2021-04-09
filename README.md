@@ -25,7 +25,7 @@ TODO
 
 ### Automatically configure a build environment and build job for iTrust (thwinter)
 
-For this task, we needed to extend the [Setup command](commands/setup.js) to take in the user's GitHub account username and password as arguments. A GitHub developer API key is required to be used as the password argument because the is the best way get cloning access to the iTrust repository that will be used in the Jenkins Job Builder.
+For this task, we needed to extend the [Setup command](commands/setup.js) to take in the user's GitHub account username and password as arguments. A GitHub developer API key is required to be used as the password argument because this is the best way to get cloning access to the iTrust repository that will be used in the Jenkins Job Builder.
 
 The iTrust application requires Java, Maven, MySQL, and Chrome in order to be fully functional. These applications were added to the [Environment task](cm/roles/environment/tasks/main.yml) installation list so that they would be automatically installed when the `pipeline setup` command is used. We also needed to create a MySQL user with a password in order to run SQL commands. Additionally, we stored the GitHub credentials in the Jenkins credentials manager so that they would be stored during the setup process and could be used during the Jenkins Job Builder phase.
 
@@ -33,12 +33,12 @@ In order to add the iTrust job to the JBB, we altered the now [create_job script
 
 The [iTrust build job](cm/build-scripts/jjb-jobs/iTrust.yml) steps are then run when the user types in `pipeline build iTrust -u <user> -p <password>`: 
 
-1. The build job checks out the iTrust repository from the NCSU GitHub using the account username and API key given in the Setup command, but has since been store as the Jenkins credentials.
+1. The build job checks out the iTrust repository from the NCSU GitHub using the account username and API key given in the Setup command, but has since been stored as the Jenkins credentials.
 2. The build job then copies the [application.yml](application.yml) information from the /bakerx/ location and into the iTrust application.yml file.
 3. The Maven tests, integration tests, and checkstyle tests are then run.
 4. The Code Coverge is then calculated using the added JaCoCo plugin for Jenkins. We utilized build gates to make sure the build fails if the code coverage is not a certain percentage.
-5. The Jenkins function recordIssues is then utilized to use the checkstyle test results. If there are any checkstyle errors, the build is gated so that it will fail.
-6. We then run some clean up steps regardless of whether the build succeeds or fails. We log into MySQL and drop the iTrust2_test database if it exists, then kill all Google Chrome processes, and then kill stray jetty processes on port 9001 using the fuser plugin.
+5. The Jenkins function recordIssues from the warnings-ng Jenkins plugin is then utilized to use the checkstyle test results. If there are any checkstyle errors, the build is gated so that it will fail.
+6. We then run some clean up steps regardless of whether the build succeeds or fails. We log into MySQL and drop the iTrust2_test database if it exists, then kill all Google Chrome processes, and then kill stray jetty processes on port 9001 using the fuser unix command.
 7. Finally, we run the general cleanWS() function to clean the Jenkins workspace.
 
 Passing Cucumber Tests:
