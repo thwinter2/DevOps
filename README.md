@@ -2,7 +2,11 @@
 
 ## Task 1 
 
+![img](Task1.png)
+
 ## Task 2
+
+![img](Task2.png)
 
 ## Task 3
 
