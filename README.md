@@ -20,6 +20,14 @@ Timing After Task 3:
 
 ## Task 4
 
+Timing Before Task 4:
+
+![img](Pre-Task4.png)
+
+Timing After Task 4:
+
+![img](Post-Task4.png)
+
 ## Task 5
 
 ## Conceptual Questions
