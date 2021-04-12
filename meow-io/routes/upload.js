@@ -19,9 +19,10 @@ router.post('/', upload.single('image'), function (req, res) {
     fs.readFile(req.file.path, async function (err, data) {
       if (err) throw err;
         var img = new Buffer.from(data).toString('base64');
+        client.rpush("pic_queue", img);
         client.lpush("cat_pic", img);
         client.ltrim("cat_pic", 0 , 4);
-      await db.cat(img);
+//      await db.cat(img);
       res.send('Ok');
 
     });

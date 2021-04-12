@@ -30,6 +30,14 @@ Timing After Task 4:
 
 ## Task 5
 
+Timing Before Task 4:
+
+![img](Post-Task4.png)
+
+Timing After Task 4:
+
+![img](Task5.png)
+
 ## Conceptual Questions
 
 * Describe three desirable properties for infrastructure.
