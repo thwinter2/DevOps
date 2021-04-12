@@ -10,6 +10,14 @@
 
 ## Task 3
 
+Timing Before Task 3:
+
+![img](Pre-Task3.png)
+
+Timing After Task 3:
+
+![img](Post-Task3.png)
+
 ## Task 4
 
 ## Task 5
