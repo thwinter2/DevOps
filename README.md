@@ -55,3 +55,7 @@ Timing After Task 5:
 * Describe the Circuit Breaker and Bulkhead pattern.
     
     **Bulkheads isolate components and protect cascading failures using load shedding. This puts a limit on the amount of requests the service can receive; if that limit is surpassed, the system simply ignores all of those additional requests. Circuit Breakers stop making requests to faulty services by cutting off access to the service if there have been too many recent faults using that service.**
+
+## Screencast
+
+[YouTube Link](http://youtu.be/WTjejmlAcYc?hd=1)
