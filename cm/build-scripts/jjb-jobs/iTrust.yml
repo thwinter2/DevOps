@@ -38,6 +38,10 @@
               qualityGates: [[threshold: 1, type: 'TOTAL', unstable: true]]
             )
           }
+          stage('Package Job'){
+            sh 'mvn package'
+            }
+          }
         } catch (e){
             throw e
           }
