@@ -8,12 +8,14 @@
   "author": "YOU",
   "license": "ISC",
   "dependencies": {
+    "bluebird": "^3.5.0",
     "chalk": "^4.1.0",
     "esprima": "^4.0.1",
+    "got": "^11.8.2",
     "jenkins": "^0.28.1",
     "random-js": "^2.1.0",
-    "yargs": "^15.4.1",
     "xml2js": "^0.4.17",
-    "bluebird": "^3.5.0"
+    "yargs": "^15.4.1",
+    "http-proxy": "^1.18.0"
   }
 }
