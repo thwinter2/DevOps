@@ -2,6 +2,10 @@
 
 ## Provision cloud instances (sawalter)
 
+Created 'pipeline prod up' command.  Currently the command reads a Digital Ocean API token from a local environment variable called NCSU_DOTOKEN. The command makes use of code adapted from the cloud provisioning workshop to make REST requests to the Digital Ocean API to create 3 VMs (itrust, checkbox, and monitor).  Currently we are creating these instances in the nyc1 region using an ubuntu 18.04 LTS x64 image with 1GB of RAM and 1 CPU, though we can update this configuration as necessary.  The script then retrieves the IP address from the DO API, and uses them to output an inventory.ini file to the local filesystem, stored in the current working directory.  Attached is a screenshot showing the script being run, the contents of the resulting inventory.ini file, and the resulting 3 cloud instances on the Digital Ocean web interface.
+
+![DO Instances Provisioned](screenshots/produp.png)
+
 ## Deploy checkbox.io and iTrust (thwinter)
 
 ## Canary analysis (anmcgill)
