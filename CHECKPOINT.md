@@ -8,6 +8,8 @@ Created 'pipeline prod up' command.  Currently the command reads a Digital Ocean
 
 ## Deploy checkbox.io and iTrust (thwinter)
 
+Created the 'pipeline deploy' command that takes in the application name and the optional inventory file as arguments. I also extended the Jenkins Job Builder pipeline for iTrust to include the 'mvn package' command to create a war file; this will then be used in the deploy script for the iTrust application. The deploy command script right now is just taking in the arguments, so I need to continue to work on implementing the actual deployment functionality. I need to clarify if the Jenkins Job Builder is being run on our VM and then pushed into production, or if we are running the JJB on the production environment. 
+
 ## Canary analysis (anmcgill)
 
 We've begun to implement the canary command. The command currently just provisions the three VMs, clones the preview microservice project from the given branches onto the green and blue VMs, and starts the service on the VMs using pm2. This is being done via a shell script that is copied to the VMs, but it may make more sense to eventually run an ansible playbook from the config-srv VM instad.
