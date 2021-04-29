@@ -10,7 +10,7 @@ sudo apt install nodejs -y
 # Install dependencies
 cd ~/checkbox.io-micro-preview
 npm install
-npm install pm2
+sudo npm install forever -g
 
 # Start service
-npx pm2 stop index; npx pm2 start index.js
+forever restart index.js || forever start index.js
