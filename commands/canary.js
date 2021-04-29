@@ -44,8 +44,8 @@ function run(blueBranch, greenBranch) {
     result = sshSync(`git clone https://github.com/chrisparnin/checkbox.io-micro-preview --branch ${greenBranch}`, `vagrant@${GREEN_IP}`);
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
-    let agentJS = path.join(__dirname, '../../agent/index.js');
-    let package = path.join(__dirname, '../../agent/package.json');
+    let agentJS = path.join(__dirname, '../agent/index.js');
+    let package = path.join(__dirname, '../agent/package.json');
 
     for (let server of [BLUE_IP, GREEN_IP]) {
         console.log(chalk.blueBright(`Starting checkbox.io app at ${server} and configuring monitoring agents...`));
@@ -62,7 +62,7 @@ function run(blueBranch, greenBranch) {
         result = scpSync(package, `vagrant@${server}:/home/vagrant/package.json`);
         if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
-        result = sshSync(`'npm install && npx pm2 stop agent && npx pm2 start agent.js || true`, `vagrant@${server}`);
+        result = sshSync(`npm install`, `vagrant@${server}`);
         if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
         result = sshSync(`\"sudo apt-get -y install redis-server\"`, `vagrant@${server}`);
@@ -74,6 +74,12 @@ function run(blueBranch, greenBranch) {
         result = sshSync('./install-redis.sh', `vagrant@${server}`);
         if( result.error ) { console.log(result.error); process.exit( result.status ); }
     }
+
+    result = sshSync(`\"forver restart agent.js blue || forever start agent.js blue\"`, `vagrant@${BLUE_IP}`);
+    if( result.error ) { console.log(result.error); process.exit( result.status ); }
+
+    result = sshSync(`\"forver restart agent.js green || forever start agent.js green\"`, `vagrant@${GREEN_IP}`);
+    if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
     result = scpSync('./cm/install-redis.sh', `vagrant@${PROXY_SERVER_IP}:/home/vagrant/install-redis.sh`);
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
@@ -89,7 +95,10 @@ function run(blueBranch, greenBranch) {
     result = sshSync(`\"curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash - && sudo apt-get -y install nodejs\"`, `vagrant@${PROXY_SERVER_IP}`);
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
-    result = sshSync('npx pm2 stop proxy && npx pm2 start /bakerx/lib/proxy.js || true', `vagrant@${PROXY_SERVER_IP}`);
+    result = sshSync('sudo npm install forever -g', `vagrant@${PROXY_SERVER_IP}`);
+    if( result.error ) { console.log(result.error); process.exit( result.status ); }
+
+    result = sshSync(`\"forever restart /bakerx/lib/proxy.js || forever start /bakerx/lib/proxy.js\"`, `vagrant@${PROXY_SERVER_IP}`);
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
     result = sshSync('node /bakerx/lib/metrics.js', `vagrant@${PROXY_SERVER_IP}`);
