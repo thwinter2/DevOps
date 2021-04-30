@@ -1,0 +1,11 @@
+---
+- hosts: itrust
+  become: true
+  roles:
+    - itrustEnvironment
+
+- hosts: checkbox
+  become: true
+  roles:
+    - checkboxEnvironment
+    - checkboxDeployment

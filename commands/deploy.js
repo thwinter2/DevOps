@@ -31,5 +31,13 @@ exports.handler = async argv => {
 };
 
 async function run(application, inventory){
-    
+
+    console.log(chalk.greenBright('Installing configuration server!'));
+
+    // Transforming path of the files in host to the path in VM's shared folder
+    let filePath = '/bakerx/cm/playbookDeployment.yml';
+
+    console.log(chalk.blueBright('Running ansible script...'));
+    result = sshSync(`/bakerx/cm/run-ansible.sh ${filePath} ${inventory}`, 'vagrant@192.168.33.20');
+    if( result.error ) { process.exit( result.status ); }
 }
