@@ -114,18 +114,39 @@ class DigitalOceanProvider
 
 	}
 
+	async keyInfo()
+	{
+		// Make REST request
+		let response = await got(`https://api.digitalocean.com/v2/account/keys`, { headers: headers, responseType: 'json' })
+		.catch(err => console.error(`keyInfo ${err}`));
+
+		if( !response ){
+			console.log('Key Failed');
+			return;	
+		};
+
+		if( response.body.ssh_keys)
+		{
+			for(let key of response.body.ssh_keys){
+				if (key.name == 'my_ssh_key'){
+					return key.id;
+				}
+			}
+		}
+
+	}
 };
 
 async function provision()
 {
 		let client = new DigitalOceanProvider();
 
-	// #############################################
-	// Create an droplet with the specified name, region, and image
-	var region = "nyc1"; // Fill one in from #1
-	var image = "ubuntu-18-04-x64"; // Fill one in from #2
-	const keyID =	await client.keyInfo();
-	
+		// #############################################
+		// Create an droplet with the specified name, region, and image
+		var region = "nyc1"; // Fill one in from #1
+		var image = "ubuntu-18-04-x64"; // Fill one in from #2
+		const keyID =	await client.keyInfo();
+
     await client.createDroplet("itrust", region, image, keyID);
     await delay(5000);  // PAUSE 5 SECONDS TO ALLOW PROVISIONING TO OCCUR
     await client.dropletInfo(dropletID);
