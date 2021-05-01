@@ -1,6 +1,8 @@
 const chalk = require('chalk');
 const got    = require("got");
 const fs = require('fs');
+const keygen = require("ssh-keygen");
+
 
 exports.command = 'prod [command]';
 exports.desc = 'Provision cloud servers iTrust, checkbox.io, and Monitor';
@@ -44,7 +46,7 @@ async function run(command) {
 class DigitalOceanProvider
 {
 
-	async createDroplet (dropletName, region, imageName )
+	async createDroplet (dropletName, region, imageName, keyID )
 	{
 		if( dropletName == "" || region == "" || imageName == "" )
 		{
@@ -58,7 +60,7 @@ class DigitalOceanProvider
 			"region":region,
 			"size":"s-1vcpu-1gb",
 			"image":imageName,
-			"ssh_keys":null,
+			"ssh_keys":[keyID],
 			"backups":false,
 			"ipv6":false,
 			"user_data":null,
@@ -116,19 +118,21 @@ class DigitalOceanProvider
 
 async function provision()
 {
-	let client = new DigitalOceanProvider();
+		let client = new DigitalOceanProvider();
 
 	// #############################################
 	// Create an droplet with the specified name, region, and image
 	var region = "nyc1"; // Fill one in from #1
 	var image = "ubuntu-18-04-x64"; // Fill one in from #2
-    await client.createDroplet("itrust", region, image);
+	const keyID =	await client.keyInfo();
+	
+    await client.createDroplet("itrust", region, image, keyID);
     await delay(5000);  // PAUSE 5 SECONDS TO ALLOW PROVISIONING TO OCCUR
     await client.dropletInfo(dropletID);
-    await client.createDroplet("checkbox", region, image);
+    await client.createDroplet("checkbox", region, image, keyID);
     await delay(5000);
     await client.dropletInfo(dropletID);
-    await client.createDroplet("monitor", region, image);
+    await client.createDroplet("monitor", region, image, keyID);
     await delay(5000);
     await client.dropletInfo(dropletID);
 
