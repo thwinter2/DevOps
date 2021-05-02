@@ -39,8 +39,7 @@
             )
           }
           stage('Package Job'){
-            sh 'mvn package'
-            }
+            sh 'cd iTrust2; mvn compile war:war; cp /var/lib/jenkins/workspace/iTrust/iTrust2/target/iTrust2-0.0.1-SNAPSHOT.war /bakerx/'
           }
         } catch (e){
             throw e

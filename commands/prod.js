@@ -1,6 +1,8 @@
 const chalk = require('chalk');
 const got    = require("got");
 const fs = require('fs');
+const keygen = require("ssh-keygen");
+
 
 exports.command = 'prod [command]';
 exports.desc = 'Provision cloud servers iTrust, checkbox.io, and Monitor';
@@ -31,7 +33,7 @@ async function run(command) {
         await provision();
         console.log(ips);
         //fs.writeFileSync('./inventory.ini', `[itrust]\n${ips[0]} ansible_ssh_private_key_file=~/.bakerx/insecure_private_key ansible_user=vagrant\n\n[checkbox]\n${ips[1]} ansible_ssh_private_key_file=~/.bakerx/insecure_private_key ansible_user=vagrant\n\n[monitor]\n${ips[2]} ansible_ssh_private_key_file=~/.bakerx/insecure_private_key ansible_user=vagrant\n`);
-        fs.writeFile("./inventory.ini", `[itrust]\n${ips[0]} ansible_ssh_private_key_file=~/.bakerx/insecure_private_key ansible_user=vagrant\n\n[checkbox]\n${ips[1]} ansible_ssh_private_key_file=~/.bakerx/insecure_private_key ansible_user=vagrant\n\n[monitor]\n${ips[2]} ansible_ssh_private_key_file=~/.bakerx/insecure_private_key ansible_user=vagrant\n`, function(err) {
+        fs.writeFile("./inventory.ini", `[itrust]\n${ips[0]} ansible_ssh_private_key_file=~/.ssh/digitalocean_rsa ansible_user=vagrant\n\n[checkbox]\n${ips[1]} ansible_ssh_private_key_file=~/.ssh/digitalocean_rsa ansible_user=vagrant\n\n[monitor]\n${ips[2]} ansible_ssh_private_key_file=~/.ssh/digitalocean_rsa ansible_user=vagrant\n`, function(err) {
             if(err) {
                 return console.log(err);
             }
@@ -44,7 +46,7 @@ async function run(command) {
 class DigitalOceanProvider
 {
 
-	async createDroplet (dropletName, region, imageName )
+	async createDroplet (dropletName, region, imageName, keyID )
 	{
 		if( dropletName == "" || region == "" || imageName == "" )
 		{
@@ -58,7 +60,7 @@ class DigitalOceanProvider
 			"region":region,
 			"size":"s-1vcpu-1gb",
 			"image":imageName,
-			"ssh_keys":null,
+			"ssh_keys":[keyID],
 			"backups":false,
 			"ipv6":false,
 			"user_data":null,
@@ -112,23 +114,46 @@ class DigitalOceanProvider
 
 	}
 
+	async keyInfo()
+	{
+		// Make REST request
+		let response = await got(`https://api.digitalocean.com/v2/account/keys`, { headers: headers, responseType: 'json' })
+		.catch(err => console.error(`keyInfo ${err}`));
+
+		if( !response ){
+			console.log('Key Failed');
+			return;	
+		};
+
+		if( response.body.ssh_keys)
+		{
+			for(let key of response.body.ssh_keys){
+				if (key.name == 'my_ssh_key'){
+					return key.id;
+				}
+			}
+		}
+
+	}
 };
 
 async function provision()
 {
-	let client = new DigitalOceanProvider();
+		let client = new DigitalOceanProvider();
 
-	// #############################################
-	// Create an droplet with the specified name, region, and image
-	var region = "nyc1"; // Fill one in from #1
-	var image = "ubuntu-18-04-x64"; // Fill one in from #2
-    await client.createDroplet("itrust", region, image);
+		// #############################################
+		// Create an droplet with the specified name, region, and image
+		var region = "nyc1"; // Fill one in from #1
+		var image = "ubuntu-18-04-x64"; // Fill one in from #2
+		const keyID =	await client.keyInfo();
+
+    await client.createDroplet("itrust", region, image, keyID);
     await delay(5000);  // PAUSE 5 SECONDS TO ALLOW PROVISIONING TO OCCUR
     await client.dropletInfo(dropletID);
-    await client.createDroplet("checkbox", region, image);
+    await client.createDroplet("checkbox", region, image, keyID);
     await delay(5000);
     await client.dropletInfo(dropletID);
-    await client.createDroplet("monitor", region, image);
+    await client.createDroplet("monitor", region, image, keyID);
     await delay(5000);
     await client.dropletInfo(dropletID);
 
