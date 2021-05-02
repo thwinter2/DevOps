@@ -268,24 +268,14 @@ async function provision(publicKey)
 
 	console.log("Created key", sshID);
 	
-
 	await client.createDroplet("itrust", region, image, sshID, publicKey);
-
-
-
     //await delay(5000);  // PAUSE 5 SECONDS TO ALLOW PROVISIONING TO OCCUR
     await client.dropletInfo(dropletID);
     await client.createDroplet("checkbox", region, image, sshID, publicKey);
-	
-
-
 	//await delay(5000);
     await client.dropletInfo(dropletID);
     await client.createDroplet("monitor", region, image, sshID, publicKey);
     //await delay(5000);
-	
-
-	
 	await client.dropletInfo(dropletID);
 
 }
