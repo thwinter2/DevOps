@@ -4,3 +4,4 @@ node_modules/
 inventory.ini
 .keys/
 *.war
+.ssh/

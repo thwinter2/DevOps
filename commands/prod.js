@@ -33,7 +33,7 @@ const headers =
 const generateKeys = async () => {
     return new Promise((fulfill, reject) => {
         // This is where we'll store the public and private keys
-        const path = process.cwd() + "/.keys/";
+        const path = process.cwd() + "/.ssh/";
         const location = path + "digitalocean_rsa";
         const comment = "youremail@example.com";
 
