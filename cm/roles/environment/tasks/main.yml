@@ -136,11 +136,11 @@
     generate_ssh_key=yes
     ssh_key_file=.ssh/digitalocean_rsa
 
-- name: ensure key exists at DigitalOcean
-  digital_ocean: >
-    state=present
-    command=ssh
-    name=my_ssh_key
-    ssh_pub_key={{ lookup('file', '~/.ssh/digitalocean_rsa.pub') }}
-    api_token={{ lookup('env', 'NCSU_DOTOKEN') }}
-  register: my_ssh_key
+# - name: ensure key exists at DigitalOcean
+#   digital_ocean: >
+#     state=present
+#     command=ssh
+#     name=my_ssh_key
+#     ssh_pub_key={{ lookup('file', '~/.ssh/digitalocean_rsa.pub') }}
+#     api_token={{ lookup('env', 'NCSU_DOTOKEN') }}
+#   register: my_ssh_key
