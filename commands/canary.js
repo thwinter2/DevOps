@@ -43,15 +43,6 @@ function configureCanaryServer(ipAddress, gitBranch, deploymentName) {
     result = sshSync(`npm install`, `vagrant@${ipAddress}`);
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
-    result = sshSync(`\"sudo apt-get -y install redis-server\"`, `vagrant@${ipAddress}`);
-    if( result.error ) { console.log(result.error); process.exit( result.status ); }
-    
-    result = scpSync('./cm/install-redis.sh', `vagrant@${ipAddress}:/home/vagrant/install-redis.sh`);
-    if( result.error ) { console.log(result.error); process.exit( result.status ); }
-
-    result = sshSync('./install-redis.sh', `vagrant@${ipAddress}`);
-    if( result.error ) { console.log(result.error); process.exit( result.status ); }
-
     result = sshSync(`forever start agent.js ${deploymentName}`, `vagrant@${ipAddress}`);
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
 }
@@ -83,7 +74,11 @@ async function run(blueBranch, greenBranch) {
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
     
     console.log(chalk.yellow('Installing NPM on proxy server...'));
-    result = sshSync(`\"curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash - && sudo apt-get -y install nodejs\"`, `vagrant@${PROXY_SERVER_IP}`);
+    if( process.platform=='win32') {
+        result = sshSync(`"curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash - && sudo apt-get -y install nodejs"`, `vagrant@${PROXY_SERVER_IP}`);
+    } else {
+        result = sshSync(`'curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash - && sudo apt-get -y install nodejs'`, `vagrant@${PROXY_SERVER_IP}`);
+    }
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
     configureCanaryServer(BLUE_IP, blueBranch, "blue");

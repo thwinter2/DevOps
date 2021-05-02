@@ -4,20 +4,18 @@ const os = require('os');
 const si = require('systeminformation');
 
 // Calculate metrics.
-// TASK 1:
 class Agent
 {
     memoryLoad()
     {
-       // console.log( os.totalmem(), os.freemem() );
-       let totalMemory = os.totalmem();
-       let memInUse = totalMemory - os.freemem();
-       return (memInUse / os.totalmem()) * 100;
+        let totalMemory = os.totalmem();
+        let memInUse = totalMemory - os.freemem();
+        return (memInUse / os.totalmem()) * 100;
     }
     async cpu()
     {
-       let load = await si.currentLoad();
-       return load.currentload;
+        let load = await si.currentLoad();
+        return load.currentload;
     }
 }
 
@@ -43,7 +41,7 @@ async function main(name)
     let client = {};
     client.publish = util.promisify(connection.publish).bind(connection);
 
-    // Push update every 1 second
+    // Push update every second
     setInterval(async function()
     {
         let payload = {
