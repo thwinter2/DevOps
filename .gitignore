@@ -3,3 +3,4 @@ node_modules/
 .vault-pass
 inventory.ini
 .keys/
+*.war

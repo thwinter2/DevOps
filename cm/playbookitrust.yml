@@ -1,0 +1,5 @@
+---
+- hosts: itrust
+  become: true
+  roles:
+    - itrustEnvironment

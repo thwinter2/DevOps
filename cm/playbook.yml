@@ -4,6 +4,8 @@
 
 - hosts: jenkins
   become: true
+  vars:
+    do_token: "{{ lookup('env', 'NCSU_DOTOKEN') }}"
   roles:
     - environment
     - jenkins

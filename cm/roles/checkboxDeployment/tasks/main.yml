@@ -1,0 +1,11 @@
+---
+- name: start MongoDB if not already running
+  service:
+    name=mongod
+    state=started
+    enabled=yes
+
+- name: Install npm pm2 package
+  npm:
+    name: pm2
+    global: yes
