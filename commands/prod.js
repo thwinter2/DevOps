@@ -20,6 +20,7 @@ config.token = process.env.NCSU_DOTOKEN;
 var dropletID;
 var ips = []; 
 var sshID;
+var savedDroplet;
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
@@ -29,6 +30,11 @@ const headers =
 	Authorization: 'Bearer ' + config.token
 };
 
+const sleep = async ms => {
+    return new Promise(f => {
+        setTimeout(f, ms);
+    });
+};
 
 const generateKeys = async () => {
     return new Promise((fulfill, reject) => {
@@ -136,7 +142,18 @@ class DigitalOceanProvider
 		if(response.statusCode == 202)
 		{
             console.log(chalk.green(`Created droplet id ${droplet.id}`));
-            dropletID = droplet.id;
+			dropletID = droplet.id;
+			
+			do {
+				await sleep(5000);
+				const result = await this.pollDroplet(dropletID);
+				droplet = savedDroplet;
+				console.log("Droplet status: " + droplet.status);
+			} while (droplet.status === "new");
+			
+			if (droplet.status !== "active") {
+				throw "Droplet had the status " + droplet.status;
+			}
 		}
 	}
 
@@ -186,6 +203,27 @@ class DigitalOceanProvider
 
 	}
 
+	async pollDroplet (id)
+	{
+		if( typeof id != "number" )
+		{
+			console.log( chalk.red("You must provide an integer id for your droplet!") );
+			return;
+		}
+
+		// Make REST request
+		let response = await got(`https://api.digitalocean.com/v2/droplets/${id}`, { headers: headers, responseType: 'json' })
+		.catch(err => console.error(`dropletInfo ${err}`));
+
+		if( !response ) return;
+
+		if( response.body.droplet )
+		{
+			savedDroplet = response.body.droplet;
+		}
+
+	}
+
 	async keyInfo()
 	{
 		// Make REST request
@@ -231,14 +269,23 @@ async function provision(publicKey)
 	console.log("Created key", sshID);
 	
 
-    await client.createDroplet("itrust", region, image, sshID, publicKey);
-    await delay(5000);  // PAUSE 5 SECONDS TO ALLOW PROVISIONING TO OCCUR
+	await client.createDroplet("itrust", region, image, sshID, publicKey);
+
+
+
+    //await delay(5000);  // PAUSE 5 SECONDS TO ALLOW PROVISIONING TO OCCUR
     await client.dropletInfo(dropletID);
     await client.createDroplet("checkbox", region, image, sshID, publicKey);
-    await delay(5000);
+	
+
+
+	//await delay(5000);
     await client.dropletInfo(dropletID);
     await client.createDroplet("monitor", region, image, sshID, publicKey);
-    await delay(5000);
-    await client.dropletInfo(dropletID);
+    //await delay(5000);
+	
+
+	
+	await client.dropletInfo(dropletID);
 
 }
