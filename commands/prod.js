@@ -2,7 +2,6 @@ const keygen = require("ssh-keygen");
 const chalk = require('chalk');
 const got    = require("got");
 const fs = require('fs');
-const keygen = require("ssh-keygen");
 
 
 exports.command = 'prod [command]';
