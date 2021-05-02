@@ -50,14 +50,13 @@
 - name: Flush Handlers
   meta: flush_handlers
 
-# This Fails
-# - name: Create mongo user
-#   mongodb_user:
-#     database: admin
-#     name: mongo
-#     password: '{{ vault_db_mongo_password }}'
-#     roles: readWrite
-#     state: present
+- name: Create mongo user
+  mongodb_user:
+    database: admin
+    name: mongo
+    password: '{{ vault_db_mongo_password }}'
+    roles: readWrite
+    state: present
 
 - name: Define Environment variables
   lineinfile:
