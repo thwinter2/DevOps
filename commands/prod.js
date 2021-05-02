@@ -95,7 +95,7 @@ async function run(command) {
 class DigitalOceanProvider
 {
 
-	async createDroplet (dropletName, region, imageName, keyID )
+	async createDroplet (dropletName, region, imageName, keyID, publicKey )
 	{
 		if( dropletName == "" || region == "" || imageName == "" )
 		{
@@ -112,7 +112,7 @@ class DigitalOceanProvider
 			"ssh_keys":[keyID],
 			"backups":false,
 			"ipv6":false,
-			"user_data":null,
+			"user_data":`#cloud-config\n  users:\n  - name: vagrant\n    groups: sudo\n    shell: /bin/bash\n    sudo: ['ALL=(ALL) NOPASSWD:ALL']\n\n    ssh-authorized-keys:\n      - ${publicKey}`,
 			"private_networking":null
 		};
 
@@ -218,7 +218,7 @@ async function provision(publicKey)
 	// Create an droplet with the specified name, region, and image
 	var region = "nyc1"; // Fill one in from #1
 	var image = "ubuntu-18-04-x64"; // Fill one in from #2
-	// fs.writeFileSync('./cloud-config', `#cloud-config\n  users:\n  - name: vagrant\n    groups: sudo\n    shell: /bin/bash\n    sudo: ['ALL=(ALL) NOPASSWD:ALL']\n\n    ssh-authorized-keys:\n      - ${publicKey}`);
+	//fs.writeFileSync('./cloud-config', `#cloud-config\n  users:\n  - name: vagrant\n    groups: sudo\n    shell: /bin/bash\n    sudo: ['ALL=(ALL) NOPASSWD:ALL']\n\n    ssh-authorized-keys:\n      - ${publicKey}`);
 
 
 	// Save the public key in DigitalOcean and get the id of it
@@ -231,13 +231,13 @@ async function provision(publicKey)
 	console.log("Created key", sshID);
 	
 
-    await client.createDroplet("itrust", region, image, sshID);
+    await client.createDroplet("itrust", region, image, sshID, publicKey);
     await delay(5000);  // PAUSE 5 SECONDS TO ALLOW PROVISIONING TO OCCUR
     await client.dropletInfo(dropletID);
-    await client.createDroplet("checkbox", region, image, sshID);
+    await client.createDroplet("checkbox", region, image, sshID, publicKey);
     await delay(5000);
     await client.dropletInfo(dropletID);
-    await client.createDroplet("monitor", region, image, sshID);
+    await client.createDroplet("monitor", region, image, sshID, publicKey);
     await delay(5000);
     await client.dropletInfo(dropletID);
 
