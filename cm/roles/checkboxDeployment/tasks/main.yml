@@ -14,3 +14,10 @@
   git:
     repo: 'https://github.com/chrisparnin/checkbox.io'
     dest: ./checkbox.io
+
+# sudo pip3 install ansible-modules-pm2  needs to be added to config-srv
+- name: Start checkbox.io, if not running
+  pm2:
+    name: checkbox.io
+    script: ./checkbox.io/server-side/site/server.js
+    state: started

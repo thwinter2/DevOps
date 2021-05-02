@@ -14,6 +14,14 @@
     pkg: nodejs
     state: present
 
+- name: Install nginx
+  apt: name=nginx state=latest
+
+- name: Start nginx
+  service:
+    name: nginx
+    state: started
+
 - name: Import MongoDB public key
   apt_key: 
     url: https://www.mongodb.org/static/pgp/server-4.4.asc
