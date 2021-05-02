@@ -32,6 +32,9 @@
   notify: 
   - Start mongodb
 
+- name: Install pip3
+  apt: name=python3-pip state=present 
+
 - name: Install pymongo through pip
   pip:
     name: pymongo
