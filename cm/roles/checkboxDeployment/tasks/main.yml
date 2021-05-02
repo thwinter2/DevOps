@@ -9,3 +9,8 @@
   npm:
     name: pm2
     global: yes
+
+- name: Git checkout
+  git:
+    repo: 'https://github.com/chrisparnin/checkbox.io'
+    dest: ./checkbox.io
