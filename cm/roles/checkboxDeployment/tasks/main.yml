@@ -9,3 +9,39 @@
   npm:
     name: pm2
     global: yes
+
+- name: Git checkout checkbox.io
+  git:
+    repo: 'https://github.com/chrisparnin/checkbox.io'
+    dest: ./checkbox.io
+
+- name: Install "checkbox.io" node.js dependencies.
+  command: 'npm install --prefix ./checkbox.io/server-side/site'
+
+# sudo pip3 install ansible-modules-pm2  needs to be added to config-srv
+- name: Start checkbox.io, if not running
+  pm2:
+    name: checkbox.io
+    script: ./checkbox.io/server-side/site/server.js
+    state: started
+
+- name: Copy the nginx config file to DO
+  copy:
+    src: /bakerx/cm/nginx.conf
+    dest: /etc/nginx/nginx.conf
+
+- name: Copy the nginx default config file to DO
+  copy:
+    src: /bakerx/cm/default
+    dest: /etc/nginx/sites-available/default
+
+# - name: create symlink
+#   file:
+#     src: /etc/nginx/sites-available/nginx.conf
+#     dest: /etc/nginx/sites-enabled/default
+#     state: link
+
+- name: Restart nginx
+  service:
+    name: nginx
+    state: restarted

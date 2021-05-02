@@ -87,6 +87,11 @@
     name: pymysql
     state: present
 
+- name: Install ansible pm2 module
+  pip:
+    name: ansible-modules-pm2
+    state: present
+
 - name: Install DigitalOceanPY
   pip:
     name: dopy>=0.3.5,<=0.3.5
