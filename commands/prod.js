@@ -1,3 +1,4 @@
+const keygen = require("ssh-keygen");
 const chalk = require('chalk');
 const got    = require("got");
 const fs = require('fs');
@@ -17,6 +18,7 @@ var config = {};
 config.token = process.env.NCSU_DOTOKEN;
 var dropletID;
 var ips = []; 
+var sshID;
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
@@ -26,10 +28,58 @@ const headers =
 	Authorization: 'Bearer ' + config.token
 };
 
+
+const generateKeys = async () => {
+    return new Promise((fulfill, reject) => {
+        // This is where we'll store the public and private keys
+        const path = process.cwd() + "/.keys/";
+        const location = path + "digitalocean_rsa";
+        const comment = "youremail@example.com";
+
+        // Make sure the .keys folder exists
+        if (!fs.existsSync(path)) {
+            fs.mkdirSync(path);
+        }
+
+        // Now generate the key
+        keygen(
+            {
+                location: location,
+                comment: comment,
+                password: null, // No password as we're automating usage
+                read: true
+            },
+            function(err, out) {
+                if (err) {
+                    reject("Error creating SSH key: " + err);
+                    return;
+                }
+
+                fulfill({
+                    privateKey: out.key,
+                    publicKey: out.pubKey
+                });
+            }
+        );
+    });
+};
+
 async function run(command) {
     if (command == "up") {
-        await provision();
-        console.log(ips);
+		try {
+			const { privateKey, publicKey } = await generateKeys();
+		
+			console.log('Private Key:', privateKey);
+			console.log('Public Key:', publicKey);
+
+			await provision(publicKey);
+
+		} catch (ex) {
+			console.error(ex);
+		}
+
+        // await provision();
+        //console.log(ips);
         //fs.writeFileSync('./inventory.ini', `[itrust]\n${ips[0]} ansible_ssh_private_key_file=~/.bakerx/insecure_private_key ansible_user=vagrant\n\n[checkbox]\n${ips[1]} ansible_ssh_private_key_file=~/.bakerx/insecure_private_key ansible_user=vagrant\n\n[monitor]\n${ips[2]} ansible_ssh_private_key_file=~/.bakerx/insecure_private_key ansible_user=vagrant\n`);
         fs.writeFile("./inventory.ini", `[itrust]\n${ips[0]} ansible_ssh_private_key_file=~/.bakerx/insecure_private_key ansible_user=vagrant\n\n[checkbox]\n${ips[1]} ansible_ssh_private_key_file=~/.bakerx/insecure_private_key ansible_user=vagrant\n\n[monitor]\n${ips[2]} ansible_ssh_private_key_file=~/.bakerx/insecure_private_key ansible_user=vagrant\n`, function(err) {
             if(err) {
@@ -44,7 +94,7 @@ async function run(command) {
 class DigitalOceanProvider
 {
 
-	async createDroplet (dropletName, region, imageName )
+	async createDroplet (dropletName, region, imageName, keyID )
 	{
 		if( dropletName == "" || region == "" || imageName == "" )
 		{
@@ -58,7 +108,7 @@ class DigitalOceanProvider
 			"region":region,
 			"size":"s-1vcpu-1gb",
 			"image":imageName,
-			"ssh_keys":null,
+			"ssh_keys":[keyID],
 			"backups":false,
 			"ipv6":false,
 			"user_data":null,
@@ -89,6 +139,29 @@ class DigitalOceanProvider
 		}
 	}
 
+	async createKey (data) {
+		let response = await got.post("https://api.digitalocean.com/v2/account/keys", 
+		{
+			headers:headers,
+			json: data
+		}).catch( err => 
+			console.error(chalk.red(`createKey: ${err}`)) 
+		);
+
+		if( !response ) return;
+
+		console.log(response.statusCode);
+		console.log(response.body);
+
+		let key = JSON.parse(response.body).ssh_key;
+
+		if(response.statusCode == 201)
+		{
+            console.log(chalk.green(`Added ssh key ${key.id}`));
+            sshID = key.id;
+		}
+	}
+
 	async dropletInfo (id)
 	{
 		if( typeof id != "number" )
@@ -114,7 +187,7 @@ class DigitalOceanProvider
 
 };
 
-async function provision()
+async function provision(publicKey)
 {
 	let client = new DigitalOceanProvider();
 
@@ -122,13 +195,26 @@ async function provision()
 	// Create an droplet with the specified name, region, and image
 	var region = "nyc1"; // Fill one in from #1
 	var image = "ubuntu-18-04-x64"; // Fill one in from #2
-    await client.createDroplet("itrust", region, image);
+	// fs.writeFileSync('./cloud-config', `#cloud-config\n  users:\n  - name: vagrant\n    groups: sudo\n    shell: /bin/bash\n    sudo: ['ALL=(ALL) NOPASSWD:ALL']\n\n    ssh-authorized-keys:\n      - ${publicKey}`);
+
+
+	// Save the public key in DigitalOcean and get the id of it
+	const keyResult = await client.createKey({
+		name: "test-key",
+		public_key: publicKey
+	});
+	//const keyID = keyResult.ssh_key.id;
+
+	console.log("Created key", sshID);
+	
+
+    await client.createDroplet("itrust", region, image, sshID);
     await delay(5000);  // PAUSE 5 SECONDS TO ALLOW PROVISIONING TO OCCUR
     await client.dropletInfo(dropletID);
-    await client.createDroplet("checkbox", region, image);
+    await client.createDroplet("checkbox", region, image, sshID);
     await delay(5000);
     await client.dropletInfo(dropletID);
-    await client.createDroplet("monitor", region, image);
+    await client.createDroplet("monitor", region, image, sshID);
     await delay(5000);
     await client.dropletInfo(dropletID);
 
