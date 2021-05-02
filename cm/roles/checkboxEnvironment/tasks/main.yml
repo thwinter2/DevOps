@@ -1,0 +1,61 @@
+---
+- name: Add nodejs apt key
+  apt_key:
+    url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+    state: present
+
+- name: Add nodejs 14.x ppa for apt repo
+  apt_repository:
+    repo: 'deb https://deb.nodesource.com/node_14.x focal main'
+    update_cache: yes
+
+- name: Install nodejs
+  apt: 
+    pkg: nodejs
+    state: present
+
+- name: Import MongoDB public key
+  apt_key: 
+    url: https://www.mongodb.org/static/pgp/server-4.4.asc
+    state: present
+
+- name: Add MongoDB Repository
+  apt_repository: 
+    repo: 'deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse'
+    state: present
+
+- name: Install MongoDB
+  apt: 
+    pkg: mongodb-org
+    state: latest
+    update_cache: yes
+  notify: 
+  - Start mongodb
+
+- name: Install pymongo through pip
+  pip:
+    name: pymongo
+
+- name: Flush Handlers
+  meta: flush_handlers
+
+- name: Create mongo user
+  mongodb_user:
+    database: admin
+    name: mongo
+    password: '{{ vault_db_mongo_password }}'
+    roles: readWrite
+    state: present
+
+- name: Define Environment variables
+  lineinfile:
+    path: /etc/environment
+    line: '{{ item }}'
+    state: present
+  with_items:
+    - APP_PORT=3002
+    - MONGO_PORT=27017
+    - MONGO_USER="mongo"
+    - MONGO_PASSWORD="{{ vault_db_mongo_password }}"
+    - MONGO_IP="localhost"
+    - MYSQL_PASSWORD="{{ vault_db_mysql_root_password }}"

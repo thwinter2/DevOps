@@ -14,52 +14,6 @@
     pkg: nodejs
     state: present
 
-- name: Import MongoDB public key
-  apt_key: 
-    url: https://www.mongodb.org/static/pgp/server-4.4.asc
-    state: present
-
-- name: Add MongoDB Repository
-  apt_repository: 
-    repo: 'deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse'
-    state: present
-
-- name: Install MongoDB
-  apt: 
-    pkg: mongodb-org
-    state: latest
-    update_cache: yes
-  notify: 
-  - Start mongodb
-
-- name: Install pymongo through pip
-  pip:
-    name: pymongo
-
-- name: Flush Handlers
-  meta: flush_handlers
-
-- name: Create mongo user
-  mongodb_user:
-    database: admin
-    name: mongo
-    password: '{{ vault_db_mongo_password }}'
-    roles: readWrite
-    state: present
-
-- name: Define Environment variables
-  lineinfile:
-    path: /etc/environment
-    line: '{{ item }}'
-    state: present
-  with_items:
-    - APP_PORT=3002
-    - MONGO_PORT=27017
-    - MONGO_USER="mongo"
-    - MONGO_PASSWORD="{{ vault_db_mongo_password }}"
-    - MONGO_IP="localhost"
-    - MYSQL_PASSWORD="{{ vault_db_mysql_root_password }}"
-
 - name: Add Java Repository
   apt_repository:
     repo: 'ppa:openjdk-r/ppa'
@@ -86,10 +40,6 @@
   pip:
     name: pymysql
     state: present
-
-- name: Install DigitalOceanPY
-  pip:
-    name: dopy>=0.3.5,<=0.3.5
 
 - name: Start MySQL service
   service: 
@@ -125,17 +75,53 @@
   apt:
     deb: https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 
-- name: ensure ssh key exists
-  user: >
-    name=vagrant
-    generate_ssh_key=yes
-    ssh_key_file=.ssh/digitalocean_rsa
+- name: Update and upgrade apt packages
+  apt:
+    upgrade: yes
+    update_cache: yes
 
-- name: ensure key exists at DigitalOcean
-  digital_ocean: >
-    state=present
-    command=ssh
-    name=my_ssh_key
-    ssh_pub_key={{ lookup('file', '~/.ssh/digitalocean_rsa.pub') }}
-    api_token={{ lookup('env', 'NCSU_DOTOKEN') }}
-  register: my_ssh_key
+- name: add tomcat group
+  group:
+    name: tomcat
+
+- name: add tomcat user
+  user:
+    name: tomcat
+    group: tomcat
+    home: /user/share/tomcat
+    createhome: no
+
+- name: create /opt/tomcat directory
+  file:
+    path: /opt/tomcat
+    state: directory
+    mode: 0755
+
+- name: download & unarchive
+  unarchive:
+    src: http://apache.cs.utah.edu/tomcat/tomcat-9/v9.0.16/bin/apache-tomcat-9.0.16.tar.gz
+    dest: /opt/tomcat
+    remote_src: yes
+    extra_opts: [--strip-components=1]
+
+- name: Change ownership
+  file:
+    path: /opt/tomcat
+    owner: tomcat
+    group: tomcat
+    mode: "u+rwx,g+rx,o=rx"
+    recurse: yes
+    state: directory
+
+- name: Copy Tomcat service from local to remote
+  copy:
+     src: tomcat.service
+     dest: /etc/systemd/system/
+     mode: 0755
+
+- name: Start and enable Tomcat service
+  systemd:
+    name: tomcat
+    state: started
+    enabled: true
+    daemon_reload: true

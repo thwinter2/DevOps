@@ -14,22 +14,35 @@ exports.builder = yargs => {
         i: {
             describe: 'The inventory file used for deployment',
             type: 'string',
+            alias: 'inventory'
         }
     });
 };
 
 exports.handler = async argv => {
-
+    
     (async () => {
-
-        const {application,inventory} = argv;
         
-        await run(application, inventory);
+        const {inventory, application} = argv;
+        
+        await run(inventory, application);
 
     })();
 
 };
 
-async function run(application, inventory){
-    
+async function run(inventory, application){
+
+    let filePath = '';
+
+    // Transforming path of the files in host to the path in VM's shared folder
+    if(application == 'iTrust'){
+        filePath = '/bakerx/cm/playbookitrust.yml';
+    }
+    else if(application == 'checkbox.io'){
+        filePath = '/bakerx/cm/playbookCheckbox.yml';
+    }
+    console.log(chalk.blueBright('Running ansible script...'));
+    result = sshSync(`/bakerx/cm/run-ansible.sh ${filePath} /bakerx/${inventory}`, 'vagrant@192.168.33.20');
+    if( result.error ) { process.exit( result.status ); }
 }
