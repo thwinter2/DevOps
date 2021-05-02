@@ -33,7 +33,7 @@ const headers =
 const generateKeys = async () => {
     return new Promise((fulfill, reject) => {
         // This is where we'll store the public and private keys
-        const path = process.cwd() + "~/.ssh/";
+        const path = process.cwd() + "/.ssh/";
         const location = path + "digitalocean_rsa";
         const comment = "youremail@example.com";
 
@@ -82,7 +82,7 @@ async function run(command) {
         // await provision();
         //console.log(ips);
         //fs.writeFileSync('./inventory.ini', `[itrust]\n${ips[0]} ansible_ssh_private_key_file=~/.bakerx/insecure_private_key ansible_user=vagrant\n\n[checkbox]\n${ips[1]} ansible_ssh_private_key_file=~/.bakerx/insecure_private_key ansible_user=vagrant\n\n[monitor]\n${ips[2]} ansible_ssh_private_key_file=~/.bakerx/insecure_private_key ansible_user=vagrant\n`);
-        fs.writeFile("./inventory.ini", `[itrust]\n${ips[0]} ansible_ssh_private_key_file=~/.ssh/digitalocean_rsa ansible_user=vagrant\n\n[checkbox]\n${ips[1]} ansible_ssh_private_key_file=~/.ssh/digitalocean_rsa ansible_user=vagrant\n\n[monitor]\n${ips[2]} ansible_ssh_private_key_file=~/.ssh/digitalocean_rsa ansible_user=vagrant\n`, function(err) {
+        fs.writeFile("./inventory.ini", `[itrust]\n${ips[0]} ansible_ssh_private_key_file=/bakerx/.ssh/digitalocean_rsa ansible_user=vagrant\n\n[checkbox]\n${ips[1]} ansible_ssh_private_key_file=/bakerx/.ssh/digitalocean_rsa ansible_user=vagrant\n\n[monitor]\n${ips[2]} ansible_ssh_private_key_file=/bakerx/.ssh/digitalocean_rsa ansible_user=vagrant\n`, function(err) {
             if(err) {
                 return console.log(err);
             }
