@@ -255,7 +255,7 @@ async function provision(publicKey)
 	// #############################################
 	// Create an droplet with the specified name, region, and image
 	var region = "nyc1"; // Fill one in from #1
-	var image = "ubuntu-18-04-x64"; // Fill one in from #2
+	var image = "ubuntu-20-04-x64"; // Fill one in from #2
 	//fs.writeFileSync('./cloud-config', `#cloud-config\n  users:\n  - name: vagrant\n    groups: sudo\n    shell: /bin/bash\n    sudo: ['ALL=(ALL) NOPASSWD:ALL']\n\n    ssh-authorized-keys:\n      - ${publicKey}`);
 
 
