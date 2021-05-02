@@ -2,6 +2,7 @@ const keygen = require("ssh-keygen");
 const chalk = require('chalk');
 const got    = require("got");
 const fs = require('fs');
+const child = require('child_process');
 
 
 exports.command = 'prod [command]';
@@ -36,40 +37,83 @@ const sleep = async ms => {
     });
 };
 
+//Works in linux but not on windows machines
+// const generateKeys = async () => {
+//     return new Promise((fulfill, reject) => {
+//         // This is where we'll store the public and private keys
+//         const path = process.cwd() + "/.ssh/";
+//         const location = path + "digitalocean_rsa";
+//         const comment = "youremail@example.com";
+
+//         // Make sure the .keys folder exists
+//         if (!fs.existsSync(path)) {
+//             fs.mkdirSync(path);
+//         }
+
+//         // Now generate the key
+//         keygen(
+//             {
+//                 location: location,
+//                 comment: comment,
+//                 password: null, // No password as we're automating usage
+//                 read: true
+//             },
+//             function(err, out) {
+//                 if (err) {
+//                     reject("Error creating SSH key: " + err);
+//                     return;
+//                 }
+
+//                 fulfill({
+//                     privateKey: out.key,
+//                     publicKey: out.pubKey
+//                 });
+//             }
+//         );
+//     });
+// };
+
 const generateKeys = async () => {
     return new Promise((fulfill, reject) => {
-        // This is where we'll store the public and private keys
+        const comment = "youremail@example.com";
         const path = process.cwd() + "/.ssh/";
         const location = path + "digitalocean_rsa";
-        const comment = "youremail@example.com";
+        const pubKeyLocation = `${location}.pub`;
 
-        // Make sure the .keys folder exists
-        if (!fs.existsSync(path)) {
-            fs.mkdirSync(path);
+        if (fs.existsSync(location)) {
+            fs.unlinkSync(location);
         }
 
-        // Now generate the key
-        keygen(
-            {
-                location: location,
-                comment: comment,
-                password: null, // No password as we're automating usage
-                read: true
-            },
-            function(err, out) {
-                if (err) {
-                    reject("Error creating SSH key: " + err);
-                    return;
-                }
+        if (fs.existsSync(pubKeyLocation)) {
+            fs.unlinkSync(pubKeyLocation);
+        }
 
-                fulfill({
-                    privateKey: out.key,
-                    publicKey: out.pubKey
-                });
-            }
-        );
+        var keygen = child.spawn('ssh-keygen', [
+            '-t', 'rsa',
+            '-b', '2048',
+            '-C', comment,
+            '-N', '',
+            '-f', location,
+            '-m', 'RFC4716'
+        ]);
+
+        keygen.stdout.on('data', function(data) {
+            console.log(`${data}`);
+        });
+
+        keygen.on('close', function() {
+            fs.readFile(location, 'utf8', function(err, privateKey) {
+                fs.readFile(pubKeyLocation, 'utf8', function(err, publicKey) {
+                    fulfill({
+                        privateKey: privateKey,
+                        publicKey: publicKey
+                    });
+                })
+            });
+        });
     });
 };
+
 
 async function run(command) {
     if (command == "up") {
@@ -88,7 +132,7 @@ async function run(command) {
         // await provision();
         //console.log(ips);
         //fs.writeFileSync('./inventory.ini', `[itrust]\n${ips[0]} ansible_ssh_private_key_file=~/.bakerx/insecure_private_key ansible_user=vagrant\n\n[checkbox]\n${ips[1]} ansible_ssh_private_key_file=~/.bakerx/insecure_private_key ansible_user=vagrant\n\n[monitor]\n${ips[2]} ansible_ssh_private_key_file=~/.bakerx/insecure_private_key ansible_user=vagrant\n`);
-        fs.writeFile("./inventory.ini", `[itrust]\n${ips[0]} ansible_ssh_private_key_file=/bakerx/.ssh/digitalocean_rsa ansible_user=vagrant\n\n[checkbox]\n${ips[1]} ansible_ssh_private_key_file=/bakerx/.ssh/digitalocean_rsa ansible_user=vagrant\n\n[monitor]\n${ips[2]} ansible_ssh_private_key_file=/bakerx/.ssh/digitalocean_rsa ansible_user=vagrant\n`, function(err) {
+        fs.writeFile("./inventory.ini", `[itrust]\n${ips[0]} ansible_ssh_private_key_file=/bakerx/.ssh/digitalocean_rsa ansible_user=vagrant ansible_ssh_common_args='-o StrictHostKeyChecking=no'\n\n[checkbox]\n${ips[1]} ansible_ssh_private_key_file=/bakerx/.ssh/digitalocean_rsa ansible_user=vagrant ansible_ssh_common_args='-o StrictHostKeyChecking=no'\n\n[monitor]\n${ips[2]} ansible_ssh_private_key_file=/bakerx/.ssh/digitalocean_rsa ansible_user=vagrant ansible_ssh_common_args='-o StrictHostKeyChecking=no'\n`, function(err) {
             if(err) {
                 return console.log(err);
             }
