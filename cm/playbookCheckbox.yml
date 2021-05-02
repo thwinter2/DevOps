@@ -1,0 +1,6 @@
+---
+- hosts: checkbox
+  become: true
+  roles:
+    - checkboxEnvironment
+    - checkboxDeployment
