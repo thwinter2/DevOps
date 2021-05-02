@@ -12,5 +12,6 @@ cd ~/checkbox.io-micro-preview
 npm install
 sudo npm install forever -g
 
-# Start service
-forever restart index.js || forever start index.js
+# Stop all processes running via forever and start checkbox.io preview microservice
+forever stopall
+forever start index.js

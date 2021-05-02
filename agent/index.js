@@ -12,7 +12,7 @@ class Agent
        // console.log( os.totalmem(), os.freemem() );
        let totalMemory = os.totalmem();
        let memInUse = totalMemory - os.freemem();
-       return memInUse / os.totalmem() * 100;
+       return (memInUse / os.totalmem()) * 100;
     }
     async cpu()
     {

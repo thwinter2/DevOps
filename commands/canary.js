@@ -52,7 +52,7 @@ function configureCanaryServer(ipAddress, gitBranch, deploymentName) {
     result = sshSync('./install-redis.sh', `vagrant@${ipAddress}`);
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
-    result = sshSync(`\"forver restart agent.js ${deploymentName} || forever start agent.js ${deploymentName}\"`, `vagrant@${ipAddress}`);
+    result = sshSync(`forever start agent.js ${deploymentName}`, `vagrant@${ipAddress}`);
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
 }
 
@@ -84,9 +84,6 @@ async function run(blueBranch, greenBranch) {
     
     console.log(chalk.yellow('Installing NPM on proxy server...'));
     result = sshSync(`\"curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash - && sudo apt-get -y install nodejs\"`, `vagrant@${PROXY_SERVER_IP}`);
-    if( result.error ) { console.log(result.error); process.exit( result.status ); }
-
-    result = sshSync('sudo npm install forever -g', `vagrant@${PROXY_SERVER_IP}`);
     if( result.error ) { console.log(result.error); process.exit( result.status ); }
 
     configureCanaryServer(BLUE_IP, blueBranch, "blue");
