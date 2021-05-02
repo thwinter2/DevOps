@@ -1,4 +1,8 @@
 ---
+create_user: vagrant
+copy_local_key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/digitalocean_rsa.pub') }}"
+sys_packages: [ 'curl', 'vim', 'git', 'ufw']
+do_token: "{{ lookup('env', 'NCSU_DOTOKEN') }}"
 vault_db_mysql_root_password: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           64323566333439626531663063626565353836333061613032393339666230653963303033316238
