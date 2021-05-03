@@ -103,7 +103,7 @@
 
 - name: copy WAR file
   ansible.builtin.copy:
-    src: /bakerx/iTrust2.war
+    src: /var/lib/jenkins/userContent/iTrust2.war
     dest: /usr/share/tomcat/webapps/
     
 - name: Restart Tomcat
