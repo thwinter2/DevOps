@@ -3,3 +3,7 @@
   service: 
     name: mysql
     state: restarted
+- name: restart tomcat
+  service:
+    name: tomcat
+    state: restarted
