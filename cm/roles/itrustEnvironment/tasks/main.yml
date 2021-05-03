@@ -36,25 +36,11 @@
     name: ['mysql-server', 'mysql-client']
     state: present
 
-- name: Install PyMySQL
-  pip:
-    name: pymysql
-    state: present
-
 - name: Start MySQL service
   service: 
     name: mysql
     state: started
     enabled: true
-
-# See the notes here for an explanation of why this is necessary:
-# https://docs.ansible.com/ansible/latest/collections/community/mysql/mysql_user_module.html#notes
-- name: Set MySQL root Password
-  mysql_user:
-    name: root
-    password: "{{ vault_db_mysql_root_password }}"
-    check_implicit_admin: true
-    login_unix_socket: /var/run/mysqld/mysqld.sock
 
 - name: Create .my.cnf file with root user credentials
   template: 
@@ -66,62 +52,59 @@
   notify:
   - Restart MySQL
 
-- name: Install jq to be used in building Jenkins credentials request
-  apt:
-    pkg: jq
-    state: present
-
 - name: Install Chrome
   apt:
     deb: https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 
-- name: Update and upgrade apt packages
-  apt:
-    upgrade: yes
-    update_cache: yes
-
-- name: add tomcat group
+- name: Add tomcat group
   group:
     name: tomcat
 
-- name: add tomcat user
+- name: Add "tomcat" user
   user:
     name: tomcat
     group: tomcat
-    home: /user/share/tomcat
+    home: /usr/share/tomcat
     createhome: no
+    system: yes
 
-- name: create /opt/tomcat directory
+- name: Create Tomcat Directory
   file:
-    path: /opt/tomcat
+    path: /usr/share/tomcat
     state: directory
-    mode: 0755
-
-- name: download & unarchive
-  unarchive:
-    src: http://apache.cs.utah.edu/tomcat/tomcat-9/v9.0.16/bin/apache-tomcat-9.0.16.tar.gz
-    dest: /opt/tomcat
-    remote_src: yes
-    extra_opts: [--strip-components=1]
-
-- name: Change ownership
-  file:
-    path: /opt/tomcat
     owner: tomcat
     group: tomcat
-    mode: "u+rwx,g+rx,o=rx"
-    recurse: yes
-    state: directory
 
-- name: Copy Tomcat service from local to remote
-  copy:
-     src: tomcat.service
-     dest: /etc/systemd/system/
-     mode: 0755
+- name: Download Tomcat
+  get_url:
+    url: "https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.45/bin/apache-tomcat-9.0.45.tar.gz"
+    dest: /tmp/apache-tomcat-9.0.45.tar.gz
 
-- name: Start and enable Tomcat service
-  systemd:
-    name: tomcat
-    state: started
-    enabled: true
-    daemon_reload: true
+- name: extract tomcat packages
+  unarchive:
+    src: /tmp/apache-tomcat-9.0.45.tar.gz
+    dest: /usr/share/tomcat
+    remote_src: yes
+    extra_opts: "--strip-components=1"
+    creates: /usr/share/tomcat/bin
+
+- name: Copy tomcat service file
+  ansible.builtin.copy:
+    src: /bakerx/cm/roles/itrustEnvironment/templates/tomcat.service
+    dest: /etc/systemd/system/
+
+- name: Copy tomcat users file
+  ansible.builtin.copy:
+    src: /bakerx/cm/roles/itrustEnvironment/templates/tomcat-users.xml
+    dest: /usr/share/tomcat/conf/
+
+- name: Initialize Tomcat
+  script: /bakerx/cm/tomcat-init.sh
+
+- name: copy WAR file
+  ansible.builtin.copy:
+    src: /bakerx/iTrust2.war
+    dest: /usr/share/tomcat/webapps/
+    
+- name: Restart Tomcat
+  script: /bakerx/cm/tomcat-restart.sh
