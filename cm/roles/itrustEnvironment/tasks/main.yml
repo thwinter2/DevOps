@@ -89,20 +89,18 @@
     creates: /usr/share/tomcat/bin
 
 - name: Copy tomcat service file
-  template:
-    src: templates/tomcat.service.j2
-    dest: /etc/systemd/system/tomcat.service
-  when: ansible_service_mgr == "systemd"
+  ansible.builtin.copy:
+    src: /bakerx/cm/roles/itrustEnvironment/templates/tomcat.service
+    dest: /etc/systemd/system/
 
 - name: Copy tomcat users file
-  template:
-    src: templates/tomcat-users.xml.j2
-    dest: /usr/share/tomcat/conf/tomcat-users.xml
-  when: ansible_service_mgr == "systemd"
+  ansible.builtin.copy:
+    src: /bakerx/cm/roles/itrustEnvironment/templates/tomcat-users.xml
+    dest: /usr/share/tomcat/conf/
 
 - name: Initialize Tomcat
   script: /bakerx/cm/tomcat-init.sh
-  
+
 - name: copy WAR file
   ansible.builtin.copy:
     src: /bakerx/iTrust2.war
