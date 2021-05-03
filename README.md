@@ -21,12 +21,26 @@ TODO
 2. In the project directory, run `npm install`
 3. In the project directory, run `npm link`
 4. Create a file in the project directory named ".vault-pass".  Inside the file, store the password for the ansible vault.
-5. In the project directory, run the command `pipeline setup --gh-user <Your GitHub Account Name> --gh-pass <GitHub API Key>`.
-6. In the project directory, run the command `pipeline build iTrust -u <jenkins-user-id> -p <jenkins-password>`
-7. In the project directory, run the command `pipeline useful-tests -c 1000 --gh-user <Your GitHub Account Name> --gh-pass <GitHub API Key>`
-8. In the project directory, run the command `pipeline build checkbox.io`.  Optionally, you may specify a username and password for Jenkins with the command `pipeline build checkbox.io -u <jenkins-user-id> -p <jenkins-password>`
+5. In the project directory, run the command `pipeline setup --gh-user <Your GitHub Account Name> --gh-pass <GitHub API Key>`.  This GitHub account must have access to clone the private iTrust2 repository.
+6. In the project directory, run the command `pipeline prod up` to create the remote instances on Digital Ocean.  This command requires a Digital Ocean API key to be stored in a NCSU_DOTOKEN environment variable.
+7. In the project directory, run the command `pipeline monitor-setup -i inventory.ini` to set up the monitoring infrastructure on the specified infrastructure.
+8. In the project directory, run the command `pipeline build checkbox.io -i inventory.ini` to deploy checkbox.io to the given inventory.
+9. In the project directory, run the command `pipeline build iTrust -u <jenkins-user-id> -p <jenkins-password>` to trigger the Jenkins build job for iTrust and create a war file for deployment.
+10. In the project directory, run the command `pipeline deploy iTrust -i inventory.ini` to deploy iTrust to the given inventory.
+11. In the project directory, run the command `pipeline canary master broken` to construct canary infrastructure, collect data, and perform analysis on the given branches.
 
 ## Provision cloud instances (sawalter)
+
+We provisioned our cloud instances in a [prod.js](commands/prod.js) script in our project.  We elected to use Digital Ocean for our remote instances.  The script requires an environment variable, NCSU_DOTOKEN, to be set containing an API key for Digital Ocean.  The script provisions 3 remote VMs, itrust, checkbox, and monitor. This is accomplished by first generating an ssh keypair for automatic authentication between the configuration management server and the remote droplets, which is stored in the configuration management server's home/.ssh directory.  We then create each droplet on Digital Ocean.  After the creation of a droplet, a helper function is used to poll the droplet every 5 seconds to determine when it has transitioned from the "new" to an "active" state, at which point we will be able to connect to or deploy to the newly created droplet.  We then query the droplets to obtain their IP addresses.  Finally, the script outputs an ansible compatible [inventory.ini](inventory.ini) file that can be used when deploying jobs to the remote droplets.
+
+The screenshot below shows the completion of the prod up script, the resulting inventory.ini file, and the instances created in Digital Ocean as a result.
+
+![Prod Up](screenshots/provision.png)
+
+### Challenges
+We initially created the prod up script in a linux environment.  When other team members who were on a Windows environment attempted ro run the script, however, the ssh keypair was not written to the file system, causing the script to fail.  After troubleshooting the problem, we determined that the node plugin being used to create the keypair was not compatible with a windows environment, due to permissions issues on the filesystem.  We were able to analyze the plugin code, however, and create our own script based on the plugin's code that was Linux and Windows compatible.  We were then able to successfully write the keypair to the filesystem.
+
+This fix created an additional problem, however, where the deploy script failed because the newly created ssh keypair files could not be used for authentication by ssh, as the permissions were to open for ssh to allow the file to be read.  Again, this was not a problem for people using Linux, but did occur for users on Windows.  Additionally, it proved impossible for a Windows user to modify the permissions of the file, as it was in the /bakerx directory.  Our solution was to copy the keypair files into the config-srv user's home directory, at which point we were able to midufy the permissions, and the script could complete successfully.
 
 ## Deploy checkbox.io and iTrust (thwinter)
 
