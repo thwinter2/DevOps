@@ -33,6 +33,12 @@ exports.handler = async argv => {
 
 async function run(inventory, application){
 
+    result = sshSync(`cp /bakerx/.ssh/* /home/vagrant/.ssh/`, 'vagrant@192.168.33.20');
+    if( result.error ) { process.exit( result.status ); }
+
+    result = sshSync(`chmod 600 /home/vagrant/.ssh/digitalocean_rsa`, 'vagrant@192.168.33.20');
+    if( result.error ) { process.exit( result.status ); }
+
     let filePath = '';
 
     // Transforming path of the files in host to the path in VM's shared folder
