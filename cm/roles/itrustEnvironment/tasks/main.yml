@@ -1,19 +1,4 @@
 ---
-- name: Add nodejs apt key
-  apt_key:
-    url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
-    state: present
-
-- name: Add nodejs 14.x ppa for apt repo
-  apt_repository:
-    repo: 'deb https://deb.nodesource.com/node_14.x focal main'
-    update_cache: yes
-
-- name: Install nodejs
-  apt: 
-    pkg: nodejs
-    state: present
-
 - name: Add Java Repository
   apt_repository:
     repo: 'ppa:openjdk-r/ppa'
@@ -36,11 +21,28 @@
     name: ['mysql-server', 'mysql-client']
     state: present
 
+- name: Install pip3
+  apt:
+    name: python3-pip
+    state: present
+
+- name: Install PyMySQL
+  pip:
+    name: pymysql
+    state: present
+
 - name: Start MySQL service
   service: 
     name: mysql
     state: started
     enabled: true
+
+- name: Set MySQL root Password
+  mysql_user:
+    name: root
+    password: "{{ vault_db_mysql_root_password }}"
+    check_implicit_admin: true
+    login_unix_socket: /var/run/mysqld/mysqld.sock
 
 - name: Create .my.cnf file with root user credentials
   template: 

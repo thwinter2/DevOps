@@ -145,7 +145,7 @@ async function run(command) {
 class DigitalOceanProvider
 {
 
-	async createDroplet (dropletName, region, imageName, keyID, publicKey )
+	async createDroplet (dropletName, region, imageName, keyID, publicKey, size )
 	{
 		if( dropletName == "" || region == "" || imageName == "" )
 		{
@@ -157,7 +157,7 @@ class DigitalOceanProvider
 		{
 			"name": dropletName,
 			"region":region,
-			"size":"s-1vcpu-1gb",
+			"size":size,
 			"image":imageName,
 			"ssh_keys":[keyID],
 			"backups":false,
@@ -312,13 +312,13 @@ async function provision(publicKey)
 
 	console.log("Created key", sshID);
 	
-	await client.createDroplet("itrust", region, image, sshID, publicKey);
+	await client.createDroplet("itrust", region, image, sshID, publicKey, "s-2vcpu-4gb");
     //await delay(5000);  // PAUSE 5 SECONDS TO ALLOW PROVISIONING TO OCCUR
     await client.dropletInfo(dropletID);
-    await client.createDroplet("checkbox", region, image, sshID, publicKey);
+    await client.createDroplet("checkbox", region, image, sshID, publicKey, "s-1vcpu-1gb");
 	//await delay(5000);
     await client.dropletInfo(dropletID);
-    await client.createDroplet("monitor", region, image, sshID, publicKey);
+    await client.createDroplet("monitor", region, image, sshID, publicKey, "s-1vcpu-1gb");
     //await delay(5000);
 	await client.dropletInfo(dropletID);
 
