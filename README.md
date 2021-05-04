@@ -1,5 +1,9 @@
 # CSC 519 Project
 
+## Final Demo
+
+TODO
+
 ## Milestone 1
 For information about Milestone 1, see our [README](https://github.ncsu.edu/cscdevops-spring2021/DEVOPS-28/blob/M1/README.md) for that milestone.
 
@@ -40,9 +44,35 @@ The screenshot below shows the completion of the prod up script, the resulting i
 ### Challenges
 We initially created the prod up script in a linux environment.  When other team members who were on a Windows environment attempted ro run the script, however, the ssh keypair was not written to the file system, causing the script to fail.  After troubleshooting the problem, we determined that the node plugin being used to create the keypair was not compatible with a windows environment, due to permissions issues on the filesystem.  We were able to analyze the plugin code, however, and create our own script based on the plugin's code that was Linux and Windows compatible.  We were then able to successfully write the keypair to the filesystem.
 
-This fix created an additional problem, however, where the deploy script failed because the newly created ssh keypair files could not be used for authentication by ssh, as the permissions were to open for ssh to allow the file to be read.  Again, this was not a problem for people using Linux, but did occur for users on Windows.  Additionally, it proved impossible for a Windows user to modify the permissions of the file, as it was in the /bakerx directory.  Our solution was to copy the keypair files into the config-srv user's home directory, at which point we were able to midufy the permissions, and the script could complete successfully.
+This fix created an additional problem, however, where the deploy script failed because the newly created ssh keypair files could not be used for authentication by ssh, as the permissions were to open for ssh to allow the file to be read.  Again, this was not a problem for people using Linux, but did occur for users on Windows.  Additionally, it proved impossible for a Windows user to modify the permissions of the file, as it was in the /bakerx directory.  Our solution was to copy the keypair files into the config-srv user's home directory, at which point we were able to modify the permissions, and the script could complete successfully.
 
 ## Deploy checkbox.io and iTrust (thwinter)
+
+### Deploying to local VMs
+
+We've tested deploying locally by provisioning VMs with the following commands:
+
+```
+bakerx run itrust focal --ip 192.168.33.22 --memory 4096
+bakerx run checkbox focal --ip 192.168.33.23
+```
+
+Note that the extra memory seems to be required for iTrust. Without it, the application doesn't seem to start up correctly.
+
+We used an inventory.ini file that looks like this:
+
+```
+[itrust]
+192.168.33.22 ansible_ssh_private_key_file=~/.bakerx/insecure_private_key ansible_user=vagrant
+
+[checkbox]
+192.168.33.23 ansible_ssh_private_key_file=~/.bakerx/insecure_private_key ansible_user=vagrant
+
+[monitor]
+192.168.33.24 ansible_ssh_private_key_file=~/.bakerx/insecure_private_key ansible_user=vagrant
+```
+
+Our deploy command attempts to copy your ~/.bakerx/insecure_private_key file to /home/vagrant/.bakerx/insecure_private_key on the config-srv VM. An [ansible.cfg](cm/ansible.cfg) file is used to disable strict host key checking, which is needed when connecting to these local VMs.
 
 ## Canary analysis (anmcgill)
 

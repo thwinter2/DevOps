@@ -125,3 +125,13 @@
 - name: Install Chrome
   apt:
     deb: https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+
+- name: Create target directory for ansible.cfg file
+  file:
+    path: /etc/ansible
+    state: directory
+
+- name: Copy ansible.cfg file
+  template:
+    src: /bakerx/ansible.cfg
+    dest: /etc/ansible/ansible.cfg
