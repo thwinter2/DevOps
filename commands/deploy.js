@@ -41,6 +41,14 @@ async function run(inventory, application){
         if( result.error ) { process.exit( result.status ); }
     }
 
+    sshSync('mkdir /home/vagrant/.bakerx', 'vagrant@192.168.33.20');
+
+    result = scpSync(`${os.homedir}/.bakerx/insecure_private_key`, 'vagrant@192.168.33.20:/home/vagrant/.bakerx/insecure_private_key');
+    if( result.error ) { process.exit( result.status ); }
+
+    result = sshSync(`chmod 600 /home/vagrant/.bakerx/insecure_private_key`, 'vagrant@192.168.33.20');
+    if( result.error ) { process.exit( result.status ); }
+
     let filePath = '';
 
     // Transforming path of the files in host to the path in VM's shared folder

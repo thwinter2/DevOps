@@ -9,7 +9,10 @@
         try{
           stage('Build') {          
             sh 'cp iTrust2/src/main/resources/application.yml.template iTrust2/src/main/resources/application.yml'
-            sh "sed -i 's/password:/password: ${MYSQL_PASSWORD}/' iTrust2/src/main/resources/application.yml"
+            sh """
+            set +x
+            sed -i 's/password:/password: ${MYSQL_PASSWORD}/' iTrust2/src/main/resources/application.yml
+            """
             sh 'cd iTrust2; mvn clean test integration-test checkstyle:checkstyle'
           }
           stage('Code Coverage') {
