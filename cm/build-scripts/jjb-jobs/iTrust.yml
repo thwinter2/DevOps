@@ -8,7 +8,8 @@
         }
         try{
           stage('Build') {          
-            sh 'cp /bakerx/application.yml iTrust2/src/main/resources/application.yml'
+            sh 'cp iTrust2/src/main/resources/application.yml.template iTrust2/src/main/resources/application.yml'
+            sh "sed -i 's/password:/password: ${MYSQL_PASSWORD}/' iTrust2/src/main/resources/application.yml"
             sh 'cd iTrust2; mvn clean test integration-test checkstyle:checkstyle'
           }
           stage('Code Coverage') {
@@ -39,7 +40,7 @@
             )
           }
           stage('Package Job'){
-            sh 'cd iTrust2; mvn compile war:war; cp /var/lib/jenkins/jobs/iTrust/workspace/iTrust2/target/iTrust2-0.0.1-SNAPSHOT.war /var/lib/jenkins/userContent/iTrust2.war'
+            sh 'cd iTrust2; mvn package; cp /var/lib/jenkins/workspace/iTrust/iTrust2/target/iTrust2-0.0.1-SNAPSHOT.war /var/lib/jenkins/userContent/iTrust2.war'
           }
         } catch (e){
             throw e
