@@ -42,11 +42,25 @@ The screenshot below shows the completion of the prod up script, the resulting i
 ![Prod Up](screenshots/provision.png)
 
 ### Challenges
-We initially created the prod up script in a linux environment.  When other team members who were on a Windows environment attempted ro run the script, however, the ssh keypair was not written to the file system, causing the script to fail.  After troubleshooting the problem, we determined that the node plugin being used to create the keypair was not compatible with a windows environment, due to permissions issues on the filesystem.  We were able to analyze the plugin code, however, and create our own script based on the plugin's code that was Linux and Windows compatible.  We were then able to successfully write the keypair to the filesystem.
+We initially created the prod up script in a linux environment.  When other team members who were on a Windows environment attempted to run the script, however, the ssh keypair was not written to the file system, causing the script to fail.  After troubleshooting the problem, we determined that the node plugin being used to create the keypair was not compatible with a windows environment, due to permissions issues on the filesystem.  We were able to analyze the plugin code, however, and create our own script based on the plugin's code that was Linux and Windows compatible.  We were then able to successfully write the keypair to the filesystem.
 
 This fix created an additional problem, however, where the deploy script failed because the newly created ssh keypair files could not be used for authentication by ssh, as the permissions were to open for ssh to allow the file to be read.  Again, this was not a problem for people using Linux, but did occur for users on Windows.  Additionally, it proved impossible for a Windows user to modify the permissions of the file, as it was in the /bakerx directory.  Our solution was to copy the keypair files into the config-srv user's home directory, at which point we were able to modify the permissions, and the script could complete successfully.
 
 ## Deploy checkbox.io and iTrust (thwinter)
+
+The deployment was accomplished using our Ansible playbook, but we added the IP Addresses from the created inventory file from the `pipeline prod up` command to our playbook. The configuration server instance now sets up the environment for checkbox.io and iTrust separately on their respective DigitalOcean droplets. To differentiate which host is being targeted for deployment, the desired application name (i.e. iTrust or checkbox.io) is an argument in the new `pipeline deploy [name] -i [inventory file]` command. The i option is the that created inventory file, and the deployment script will assign the host information in the inventory file to the Ansible playbook.
+
+The process to deploy checkbox.io to the DigitalOcean droplet is similar to deploying the application on a local VM. The additional requirement for deployment was that we need to set up a static server to route any API requests to the application. We utilized a nginx to accomplish such a task. The process is broken into Ansible roles; the [first role](cm/roles/checkboxEnvironment/tasks/main.yml) configures the droplet environment for all of the necessary software to run checkbox.io. This role installs Node, MongoDB, nginx, and sets up the environment variables that the application requires. The [second Ansible role](cm/roles/checkboxDeployment/tasks/main.yml) starts the MongoDB and nginx servers and also checkouts the checkbox.io repository. The nginx configuration file is then copied to the DigitalOcean droplet, and the application is up and running.
+
+![img](screenshots/checkboxDeploy.png)
+
+The process to deploy iTrust to the DigitalOcean droplet required another Ansible role called [itrustEnvironment](cm/roles/itrustEnvironment/tasks/main.yml) that installed all of the necessary software on the iTrust droplet such as Java, MySQL, and Chrome. In addition to the software that was only needed to run iTrust locally, a Tomcat server was needed to run iTrust remotely. The Tomcat server was also set up in the Ansible role; the tasks consisted of creating a Tomcat user and group that had permissions to modify files that were installed from the Tomcat download. To actually deploy the application, we needed to compile the local iTrust application into a WAR file. This was done during the Jenkins Job Builder pipeline; the WAR file was copied to the local configuration server to then be copied again to the remote iTrust droplet. Once the WAR file has been copied to the remote droplet, the Tomcat server was reset and the application was running on port 8080 (the Tomcat server port) with /iTrust2 being the route to view the application homepage.
+
+![img](screenshots/iTrust2.png)
+
+### Challenges
+
+We had a lot of issues deploying the iTrust application. One of the major issues was getting the application to run because the Tomcat server was running and it seemed setup how it needed to be, and iTrust itself was as simple as copying the WAR file from our configuration server. It turned out that we were not saving the MySQL password as an environment variable in the droplet, but we were trying to login with an environment variable, so our MySQL user was not logging in and thus preventing iTrust from functioning. We also had an issue with saving the WAR file on different operating systems. Our Windows users could easily save the compiled WAR file in the /bakerx/ directory on the configuration server, but our Linux user could not. Another iTrust issue was making sure the application had enough RAM to run; we increased the droplet to have at least 4GB of RAM and that seemed to be another functionality block. 
 
 ### Deploying to local VMs
 
@@ -72,7 +86,7 @@ We used an inventory.ini file that looks like this:
 192.168.33.24 ansible_ssh_private_key_file=~/.bakerx/insecure_private_key ansible_user=vagrant
 ```
 
-Our deploy command attempts to copy your ~/.bakerx/insecure_private_key file to /home/vagrant/.bakerx/insecure_private_key on the config-srv VM. An [ansible.cfg](cm/ansible.cfg) file is used to disable strict host key checking, which is needed when connecting to these local VMs.
+Our deploy command attempts to copy your ~/.bakerx/insecure_private_key file to /home/vagrant/.bakerx/insecure_private_key on the config-srv VM. An [ansible.cfg](ansible.cfg) file is used to disable strict host key checking, which is needed when connecting to these local VMs.
 
 ## Canary analysis (anmcgill)
 
