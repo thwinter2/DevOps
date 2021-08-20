@@ -1,0 +1,61 @@
+- job:
+    name: iTrust
+    project-type: pipeline
+    dsl: |
+      node {
+        stage('Source') {
+          git url: 'https://github.ncsu.edu/engr-csc326-staff/iTrust2-v8', credentialsId: 'gh-password', branch: 'main'
+        }
+        try{
+          stage('Build') {          
+            sh 'cp iTrust2/src/main/resources/application.yml.template iTrust2/src/main/resources/application.yml'
+            sh """
+            set +x
+            sed -i 's/password:/password: ${MYSQL_PASSWORD}/' iTrust2/src/main/resources/application.yml
+            """
+            sh 'cd iTrust2; mvn clean test integration-test checkstyle:checkstyle'
+          }
+          stage('Code Coverage') {
+            jacoco( 
+              execPattern: '**/*.exec',
+              classPattern: '**/classes',
+              sourcePattern: '**/src/main/java',
+              exclusionPattern: '**/src/test*',
+              changeBuildStatus: true,
+              minimumLineCoverage: '50',
+              maximumLineCoverage: '60',
+              minimumInstructionCoverage: '50',
+              maximumInstructionCoverage: '60',
+              minimumMethodCoverage: '50',
+              maximumMethodCoverage: '60',
+              minimumBranchCoverage: '30',
+              maximumBranchCoverage: '40',
+              minimumClassCoverage: '80',
+              maximumClassCoverage: '90'
+            )
+          }
+          stage('Static Analysis') {
+            recordIssues(
+              enabledForFailure: true,
+              aggregatingResults: true,
+              tool: checkStyle(pattern: '**/checkstyle-result.xml'),
+              qualityGates: [[threshold: 1, type: 'TOTAL', unstable: true]]
+            )
+          }
+          stage('Package Job'){
+            sh "cd iTrust2; mvn package; cp ${WORKSPACE}/iTrust2/target/iTrust2-0.0.1-SNAPSHOT.war /var/lib/jenkins/userContent/iTrust2.war"
+          }
+        } catch (e){
+            throw e
+          }
+        finally{
+          sh '''
+            set +x
+            mysql -u root -p$MYSQL_PASSWORD -e 'DROP DATABASE IF EXISTS iTrust2_test' 2>/dev/null
+            pkill chrome || true
+            fuser -k 9001/tcp || true
+          '''
+          cleanWs()
+        }
+      }
+

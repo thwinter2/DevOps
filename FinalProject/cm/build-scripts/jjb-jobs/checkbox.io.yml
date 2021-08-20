@@ -1,0 +1,20 @@
+- job:
+    name: checkbox.io
+    project-type: pipeline
+    dsl: |
+      node {
+          stage('Source') {
+              cleanWs()
+              git 'https://github.com/chrisparnin/checkbox.io'
+          }
+          stage('Build') {
+              sh 'npm install --prefix ./server-side/site'
+              sh 'pm2 start ./server-side/site/server.js --name checkboxio'
+          }
+          stage('Static Analysis') {
+              catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') { sh "/bakerx/cm/build-scripts/jjb-jobs/staticAnalysis.sh" }
+          }
+          stage('Test') {
+              sh 'cd ./server-side/site/ ; npm test'
+          }
+      }

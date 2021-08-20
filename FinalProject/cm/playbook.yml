@@ -1,0 +1,10 @@
+---
+# see the best practices in ansible docs for how to get started with creating roles etc.: 
+# https://docs.ansible.com/ansible/latest/user_guide/playbooks_best_practices.html
+
+- hosts: jenkins
+  become: true
+  roles:
+    - environment
+    - jenkins
+    - build
